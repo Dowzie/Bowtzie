@@ -7,7 +7,7 @@ const client = new Discord.Client();
 client.on('ready', () => {
 
     console.log('I am ready!');
- bot.user.setGame ('En chie à prog un bot').catch(console.error)
+client.user.setGame ('En chie à prog un bot').catch(console.error)
 
 });
 
