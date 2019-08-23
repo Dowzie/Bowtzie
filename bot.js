@@ -10,11 +10,6 @@ client.on('ready', () => {
 
 });
 
- client.on('message', message => {
-
-    if (message.content === '!tipeee') {
-
-       message.reply('Go me supporter sur Tipeee https://fr.tipeee.com/dowzie :dovvziWink')
 
 client.on('message', message => {
 
