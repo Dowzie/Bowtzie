@@ -14,9 +14,9 @@ client.on('ready', () => {
 
 client.on('message', message => {
 
-    if (message.content === 'ping') {
+    if (message.content === '!tipeee') {
 
-       message.reply('pong');
+       message.reply('Go me support sur Tipeee si tu aime mon job, plein de trucs cool en contrepartie ;) https://fr.tipeee.com/dowzie');
 
        }
 
