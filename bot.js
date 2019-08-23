@@ -7,7 +7,7 @@ const client = new Discord.Client();
 client.on('ready', () => {
 
     console.log('I am ready!');
-client.user.setGame ('En chie à prog un bot').catch(console.error)
+client.user.showCurrentGame ('En chie à prog un bot');
 
 });
 
@@ -15,7 +15,7 @@ client.user.setGame ('En chie à prog un bot').catch(console.error)
 
 client.on('message', message => {
 
-    if (message.content === 'ping') {
+    if (message.content === '!ping') {
 
        message.reply('pong');
 
