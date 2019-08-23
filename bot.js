@@ -7,7 +7,6 @@ const client = new Discord.Client();
 client.on('ready', () => {
 
     console.log('I am ready!');
-client.user.showCurrentGame ('En chie à prog un bot');
 
 });
 
