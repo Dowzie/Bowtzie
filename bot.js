@@ -20,8 +20,7 @@ client.on('message', message => {
        message.reply('Go me support sur Tipeee si tu aime mon job, plein de trucs cool en contrepartie ;) \n \
                      https://fr.tipeee.com/dowzie');
     }
-    if (message.content.toLowerCase().includes('prout', 0) && !(message.content.includes('C\'est toi le prout', 0))) {
-        message.reply('C\'est toi le prout !');
+    if (message.content.toLowerCase().includes('prout', 0) && ! if (message.author.bot) return;
     }
 });
 
