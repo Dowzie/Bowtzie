@@ -19,10 +19,9 @@ client.on('message', message => {
     if (message.content === '!tipeee'){
        message.reply('Test tipeee');
     }
-    if (message.content.includes('prout', 0) && !(message.content.includes('Bowtzie', 0))) {
+    if (message.content.includes('prout', 0) && !(message.content.includes('C\'est toi le prout', 0))) {
         message.reply('C\'est toi le prout !');
     }
-
 });
 
  
