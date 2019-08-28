@@ -25,7 +25,7 @@ client.on('message', message => {
     }
   if (message.content === '!dowzie'){
        message.reply('Go follow pour ne rien rater ! \n:pushpin:  Facebook : <https://www.facebook.com/DowzieCosplay> \n \
-:pushpin:  Twitter : <https://twitter.com/dovvzie> \n:pushpin:  Instagram : <https://www.instagram.com/dovvzie> \n:pushpin:  Twitch : <https://www.twitch.tv/dovvzie> \n:pushpin:  Site internet : <https://fr.tipeee.com/dowzie>');
+:pushpin:  Twitter : <https://twitter.com/dovvzie> \n:pushpin:  Instagram : <https://www.instagram.com/dovvzie> \n:pushpin:  Twitch : <https://www.twitch.tv/dovvzie> \n:pushpin:  Tipeee : <https://fr.tipeee.com/dowzie>');
     }
     if (message.content.toLowerCase().includes('prout', 0) && !(message.author.bot)){
         message.reply('C\'est toi le prout !');
