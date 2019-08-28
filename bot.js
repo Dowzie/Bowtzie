@@ -17,8 +17,7 @@ client.on('message', message => {
        message.reply('pong');
     }
     if (message.content === '!tipeee'){
-       message.reply('Go me support sur Tipeee si tu aime mon job, plein de trucs cool en contrepartie ;) \n \
-                     https://fr.tipeee.com/dowzie');
+       message.reply('Go me support sur Tipeee si tu aime mon job, plein de trucs cool en contrepartie :wink: \nhttps://fr.tipeee.com/dowzie');
     }
     if (message.content.toLowerCase().includes('prout', 0) && !(message.author.bot)){
         message.reply('C\'est toi le prout !');
