@@ -26,7 +26,7 @@ client.on('message', message => {
    if (message.content.toLowerCase().includes('dovvzie', 0) && !(message.author.bot)){
         message.channel.send('<@194524212134674432> c\'est un gros caca !');
     }
-    if (message.content.toLowerCase().includes('<@194524212134674432> c\'est un gros caca !', 0) && !){
+    if (message.content.toLowerCase().includes('@Dowzie c\'est un gros caca !', 0) && !){
         message.channel.send('<@253491625328771073> AUSSI !');
     }
   if (message.content === '!dowzie'){
