@@ -26,6 +26,9 @@ client.on('message', message => {
    if (message.content.toLowerCase().includes('dovvzie', 0) && !(message.author.bot)){
         message.channel.send('<@194524212134674432> c\'est un gros caca !');
     }
+    if (message.content.toLowerCase().includes('<@194524212134674432> c\'est un gros caca !', 0) && !){
+        message.channel.send('<@253491625328771073> AUSSI !');
+    }
   if (message.content === '!dowzie'){
        message.reply('Go follow pour ne rien rater ! \n:pushpin:  Facebook : <https://www.facebook.com/DowzieCosplay> \n \
 :pushpin:  Twitter : <https://twitter.com/dovvzie> \n:pushpin:  Instagram : <https://www.instagram.com/dovvzie> \n:pushpin:  Twitch : <https://www.twitch.tv/dovvzie> \n:pushpin:  Tipeee : <https://fr.tipeee.com/dowzie>');
