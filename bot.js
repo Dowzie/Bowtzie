@@ -26,15 +26,15 @@ et d\'autres plus secrètes :wink:');
     if (message.content === '!ping') {
        message.reply('pong');
     }
-    if (message.content.toLowerCase().includes('dovvzie', 0) && !(message.author.bot)){
+    if (message.content.toLowerCase().includes('dovvzie', 0)){
         message.channel.send('<@194524212134674432> c\'est un gros caca !');
         message.channel.send('<@253491625328771073> AUSSI !');
     }
   
-    if (message.content.toLowerCase().includes('prout', 0) && !(message.author.bot)){
+    if (message.content.toLowerCase().includes('prout', 0)){
         message.reply('C\'est toi le prout !');
     }
-    if (message.content.toLowerCase().includes('pizza', 0) && message.content.toLowerCase().includes('ananas') && !(message.author.bot)){
+    if (message.content.toLowerCase().includes('pizza', 0) && message.content.toLowerCase().includes('ananas')){
         message.channel.send('J\'ai entendu Pizza et Ananas dans la même phrase, j\'espere que vous ne mangez pas ca ! \n https://tenor.com/view/ew-disgust-gif-3671501');
     }
  
