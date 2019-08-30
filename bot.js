@@ -30,6 +30,9 @@ et d\'autres plus secrètes :wink:');
         message.channel.send('<@194524212134674432> c\'est un gros caca !');
         message.channel.send('<@253491625328771073> AUSSI !');
     }
+    if (message.content.toLowerCase().includes('faute de jezal',0)){
+      message.reply('Tut tut tut ! Comme inscrit dans la constitution, c\'est la faute A Jezal !');
+    }
   
     if (message.content.toLowerCase().includes('prout', 0)){
         message.reply('C\'est toi le prout !');
