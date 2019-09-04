@@ -62,6 +62,13 @@ et d\'autres plus secrètes :wink:');
 
 });
 
+client.on('presenceUpdate', (oldMember, newMember) => {
+    if (newMember.presence.game && newMember.presence.game.streaming && newMember.id === '253491625328771073'){
+	    client.channels.get('618917882151174165').send(':dovvziBOOP: Test LIVE') ;
+    }
+		
+		});
+
  
 
 // THIS  MUST  BE  THIS  WAY
