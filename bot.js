@@ -25,7 +25,7 @@ et d\'autres plus secrètes :wink:');
 	 
     // Test Commands
     if (message.content === '!testStream'){
-        exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET 'https://api.twitch.tv/helix/streams?user_login=androuch_'") {
+        exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET 'https://api.twitch.tv/helix/streams?user_login=androuch_'", function (error, stdout, stderr) {
             console.log('stdout: ' + stdout);
         });
     }
