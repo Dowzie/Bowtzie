@@ -1,4 +1,5 @@
 const Discord = require('discord.js');
+var exec = require('child_process').exec;
 
 const client = new Discord.Client();
 
@@ -21,6 +22,14 @@ client.on('message', message => {
 !dowzie \n \
 et d\'autres plus secrètes :wink:');
     }
+	 
+    // Test Commands
+    if (message.content === '!testStream'){
+        exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET 'https://api.twitch.tv/helix/streams?user_login=androuch_'") {
+            console.log('stdout: ' + stdout);
+        });
+    }
+
  
     // Fun Commands
     if (message.content === '!ping') {
