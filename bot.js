@@ -1,33 +1,43 @@
+// Global Variables 
+
 const Discord = require('discord.js');
 var exec = require('child_process').exec;
-
 const client = new Discord.Client();
 
- 
+// Functions
+
+function sendCUrlRequest(type, target){
+	var url = null;
+	var typeFound = false;
+	if (type === 'getStreamInfo'){
+		url = "https://api.twitch.tv/helix/streams?user_login="+target;
+		typeFound = true;
+	}
+	if(type === 'getGameInfo'){
+		url = "https://api.twitch.tv/helix/games?id="+target;
+		typeFound = true;
+	}
+	exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+url+"'", function (error, stdout, stderr) {
+		console.log('stdout: ' + stdout); // Treatment to do here
+	});
+}
+
+// Event Manager
 
 client.on('ready', () => {
-
     console.log('I am ready!');
-
 });
 
 
 client.on('message', message => {
  if(!(message.author.bot)){
     if (message.content === '!help'){
-       message.reply('Voici les differentes commandes disponibles : \n \
-!ping \n \
-!tipeee \n \
-!chouchou \n \
-!dowzie \n \
-et d\'autres plus secrètes :wink:');
+       message.reply('Voici les differentes commandes disponibles : \n !ping \n !tipeee \n !chouchou \n !dowzie \n et d\'autres plus secrètes :wink:');
     }
 	 
     // Test Commands
     if (message.content === '!testStream'){
-        exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET 'https://api.twitch.tv/helix/streams?user_login=androuch_'", function (error, stdout, stderr) {
-            console.log('stdout: ' + stdout);
-        });
+        sendCUrlRequest('getGameInfo', "493057");
     }
 
  
@@ -75,8 +85,7 @@ client.on('presenceUpdate', (oldMember, newMember) => {
     if (newMember.presence.game && newMember.presence.game.streaming && newMember.id === '253491625328771073'){
 	    client.channels.get('618917882151174165').send(':dovvziBOOP: Test LIVE') ;
     }
-		
-		});
+});
 
  
 
