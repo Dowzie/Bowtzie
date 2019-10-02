@@ -85,6 +85,11 @@ client.on('message', message => {
        message.reply('Go follow pour ne rien rater ! \n:pushpin:  Facebook : <https://www.facebook.com/DowzieCosplay> \n \
 :pushpin:  Twitter : <https://twitter.com/dovvzie> \n:pushpin:  Instagram : <https://www.instagram.com/dovvzie> \n:pushpin:  Twitch : <https://www.twitch.tv/dovvzie> \n:pushpin:  Tipeee : <https://fr.tipeee.com/dowzie>');
     }
+	 
+	if (message.content === "hipster"){
+		message.channel.send("On m'a appelé ?");
+		message.channel.send({files: ['./loreal.gif']});
+	}
  }
  
 
