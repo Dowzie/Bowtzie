@@ -90,6 +90,14 @@ client.on('message', message => {
 		message.channel.send("On m'a appelé ?");
 		message.channel.send({files: ['./loreal.gif']});
 	}
+	
+	if (message.content === "hipsterdabv1"){
+		message.channel.send({files: ['./hipsterdabv1.gif']});
+	}
+	
+	if (message.content === "hipsterdabv2"){
+		message.channel.send({files: ['./hipsterdabv2.gif']});
+	}
  }
  
 
