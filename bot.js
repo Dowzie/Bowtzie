@@ -86,16 +86,12 @@ client.on('message', message => {
 :pushpin:  Twitter : <https://twitter.com/dovvzie> \n:pushpin:  Instagram : <https://www.instagram.com/dovvzie> \n:pushpin:  Twitch : <https://www.twitch.tv/dovvzie> \n:pushpin:  Tipeee : <https://fr.tipeee.com/dowzie>');
     }
 	 
-	if (message.content === "hipster"){
+	if (message.content === "!hipster"){
 		message.channel.send("On m'a appelé ?");
 		message.channel.send({files: ['./loreal.gif']});
 	}
 	
-	if (message.content === "hipsterdabv1"){
-		message.channel.send({files: ['./hipsterdabv1.gif']});
-	}
-	
-	if (message.content === "hipsterdabv2"){
+	if (message.content === "!hipsterdab"){
 		message.channel.send({files: ['./hipsterdabv2.gif']});
 	}
  }
