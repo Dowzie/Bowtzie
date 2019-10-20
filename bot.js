@@ -99,11 +99,11 @@ client.on('message', message => {
 
 });
 
-client.on('presenceUpdate', (oldMember, newMember) => {
+/*client.on('presenceUpdate', (oldMember, newMember) => {
     if (newMember.presence.game && newMember.presence.game.streaming && newMember.id === '194524212134674432'){
 	    client.channels.get('618917882151174165').send(':dovvziBOOP: Test LIVE') ;
     }
-});
+});*/
 
  
 
