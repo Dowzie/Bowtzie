@@ -48,7 +48,7 @@ client.on('message', message => {
 	if (message.content === '!testStream') {
 		StreamInfo = sendCUrlRequest('getStreamInfo', 'locklear');
 		StreamData = JSON.parse(StreamInfo);
-		message.content.reply("Le test stream se fait sur : "+StreamData["data"]["user_name"];);
+		message.content.reply("Le test stream se fait sur : "+StreamData["data"]["user_name"]);
 		message.content.reply("Il streame actuellement avec le titre : "+StreamData["data"]["title"]);
 	}
 
