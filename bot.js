@@ -21,7 +21,27 @@ function sendCUrlRequest(type, target){
 		url = "https://api.twitch.tv/helix/games?id="+target;
 		typeFound = true;
 	}
-	exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+url+"'", function (error, stdout, stderr) {
+	if(type === 'getGameInfo'){
+		let GameInfo = JSON.parse(execSync("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+url+"'");
+	}
+	if(type == 'getStreamInfo'){
+		let StreamInfo = JSON.parse(execSync("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+url+"'");
+		let userStreaming = StreamInfo["data"][0]
+		let GameInfo = JSON.parse(sendCUrlRequest('getGameInfo', userStreaming["game_id"]));
+		let channelLive = client.channels.get('614263675947188231');
+		channelLive.send("Le test stream se fait sur : "+userStreaming["user_name"]);
+		channelLive.send("Il streame actuellement avec le titre : "+userStreaming["title"]);
+		let message = userStreaming["user_name"]+" est en live !\nhttps://twitch.tv/"+userStreaming["user_name"];
+		let embeddedInfo = new Discord.RichEmbed()
+		.setTitle(userStreaming["user_name"]+" est en LIVE !")
+		.setColor(0x02d414)
+		.addField('En live sur', GameInfo["data"][0]["name"], true)
+		.setImage("https://i.ebayimg.com/images/g/kYsAAOSwTxhcHX-Y/s-l400.jpg")
+		.setTimestamp(userStreaming["timestamp"])
+		.setFooter("twitch.tv/"+userStreaming["user_name"]);
+		channelLive.send(message,{"embed": embeddedInfo});
+	}
+	/*exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+url+"'", function (error, stdout, stderr) {
 		let StreamInfo = JSON.parse(stdout);
 		let userStreaming = StreamInfo["data"][0]
 		let channelLive = client.channels.get('614263675947188231');
@@ -31,11 +51,12 @@ function sendCUrlRequest(type, target){
 		let embeddedInfo = new Discord.RichEmbed()
 		.setTitle(userStreaming["user_name"]+" est en LIVE !")
 		.setColor(0x02d414)
+		.addField('En live sur', '', true)
 		.setImage("https://i.ebayimg.com/images/g/kYsAAOSwTxhcHX-Y/s-l400.jpg")
 		.setTimestamp(userStreaming["timestamp"])
 		.setFooter("twitch.tv/"+userStreaming["user_name"]);
 		channelLive.send(message,{"embed": embeddedInfo});
-	});
+	});*/
 }
 
 // Event Manager
