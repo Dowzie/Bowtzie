@@ -34,7 +34,7 @@ function sendCUrlRequest(type, target){
 		.setImage("https://i.ebayimg.com/images/g/kYsAAOSwTxhcHX-Y/s-l400.jpg")
 		.setTimestamp(userStreaming["timestamp"])
 		.setFooter("twitch.tv/"+userStreaming["user_name"]);
-		channelLive.send("test it",{"embed": embeddedInfo});
+		channelLive.send(message,{"embed": embeddedInfo});
 	});
 }
 
