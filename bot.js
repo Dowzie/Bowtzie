@@ -27,6 +27,7 @@ function sendCUrlRequest(type, target){
 		let channelLive = client.channels.get('614263675947188231');
 		channelLive.send("Le test stream se fait sur : "+userStreaming["user_name"]);
 		channelLive.send("Il streame actuellement avec le titre : "+userStreaming["title"]);
+		let message = userStreaming["user_name"]+" est en live !\nhttps://twitch.tv/"+userStreaming["user_name"];
 		let embeddedInfo = new Discord.RichEmbed()
 		.setTitle(userStreaming["user_name"]+" est occupé à streamer ! Dépechez-vous !")
 		.setColor(0x02d414)
@@ -56,7 +57,7 @@ client.on('message', message => {
 	 
     // Test Commands
 	if (message.content === '!testStream') {
-		StreamInfo = sendCUrlRequest('getStreamInfo', 'summit1g');
+		StreamInfo = sendCUrlRequest('getStreamInfo', 'Locklear');
 	}
 
  
