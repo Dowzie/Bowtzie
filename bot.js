@@ -57,7 +57,7 @@ client.on('message', message => {
 	 
     // Test Commands
 	if (message.content === '!testStream') {
-		StreamInfo = sendCUrlRequest('getStreamInfo', 'locklear');
+		StreamInfo = sendCUrlRequest('getStreamInfo', 'summit1g');
 	}
 
  
