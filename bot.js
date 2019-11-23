@@ -29,7 +29,7 @@ function sendCUrlRequest(type, target){
 		let channelLive = client.channels.get('614263675947188231');
 		channelLive.send("Le test stream se fait sur : "+userStreaming["user_name"]);
 		channelLive.send("Il streame actuellement avec le titre : "+userStreaming["title"]);
-		let embeddedInfo = new RichEmbed()
+		let embeddedInfo = new Discord.RichEmbed()
 		.setTitle(userStreaming["user_name"]+" est occupé à streamer ! Dépechez-vous !")
 		.setColor(0x02d414)
 		.setImage("https://i.ebayimg.com/images/g/kYsAAOSwTxhcHX-Y/s-l400.jpg")
