@@ -34,7 +34,7 @@ function sendCUrlRequest(type, target){
 		.setTimestamp(userStreaming["timestamp"])
 		.setFooter("twitch.tv/"+userStreaming["user_name"]);
 		console.log(embeddedInfo);
-		channelLive.send("Send message try...", embeddedInfo);
+		channelLive.send(content="Send message try...", options=embeddedInfo);
 	});
 }
 
