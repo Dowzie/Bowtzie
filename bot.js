@@ -27,14 +27,14 @@ function sendCUrlRequest(type, target){
 		let channelLive = client.channels.get('614263675947188231');
 		channelLive.send("Le test stream se fait sur : "+userStreaming["user_name"]);
 		channelLive.send("Il streame actuellement avec le titre : "+userStreaming["title"]);
-		/*let message = userStreaming["user_name"]+" est en live !\nhttps://twitch.tv/"+userStreaming["user_name"];
+		let message = userStreaming["user_name"]+" est en live !\nhttps://twitch.tv/"+userStreaming["user_name"];
 		let embeddedInfo = new Discord.RichEmbed()
 		.setTitle(userStreaming["user_name"]+" est en LIVE !")
 		.setColor(0x02d414)
 		.setImage("https://i.ebayimg.com/images/g/kYsAAOSwTxhcHX-Y/s-l400.jpg")
 		.setTimestamp(userStreaming["timestamp"])
 		.setFooter("twitch.tv/"+userStreaming["user_name"]);
-		channelLive.send(message,{"embed": embeddedInfo});*/
+		channelLive.send(message,{"embed": embeddedInfo});
 	});
 }
 
