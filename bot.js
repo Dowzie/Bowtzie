@@ -1,7 +1,7 @@
 // Global Variables 
 
 const Discord = require('discord.js');
-var exec = require('child_process').exec;
+var execSync = require('child_process').execSync;
 const client = new Discord.Client();
 
 // Global Variables - State of Bot
