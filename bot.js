@@ -23,6 +23,7 @@ function sendCUrlRequest(type, target){
 	}
 	exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+url+"'", function (error, stdout, stderr) {
 		console.log('stdout: ' + stdout); // Treatment to do here
+		return stdout;
 	});
 }
 
@@ -45,7 +46,10 @@ client.on('message', message => {
 	 
     // Test Commands
 	if (message.content === '!testStream') {
-		sendCUrlRequest('getStreamInfo', 'locklear');
+		StreamInfo = sendCUrlRequest('getStreamInfo', 'locklear');
+		StreamData = JSON.parse(StreamInfo);
+		message.content.reply("Le test stream se fait sur : "+StreamData["data"]["user_name"];);
+		message.content.reply("Il streame actuellement avec le titre : "+StreamData["data"]["title"]);
 	}
 
  
