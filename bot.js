@@ -24,8 +24,9 @@ function sendCUrlRequest(type, target){
 	exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+url+"'", function (error, stdout, stderr) {
 		console.log('stdout: ' + stdout); // Treatment to do here
 		StreamInfo = JSON.parse(stdout);
-		client.channels.get('618917882151174165').send("Le test stream se fait sur : "+StreamInfo["data"]["user_name"]);
-		client.channels.get('618917882151174165').send("Il streame actuellement avec le titre : "+StreamInfo["data"]["title"]);
+		console.log(StreamInfo);
+		client.channels.get('614263675947188231').send("Le test stream se fait sur : "+StreamInfo["data"]["user_name"]);
+		client.channels.get('614263675947188231').send("Il streame actuellement avec le titre : "+StreamInfo["data"]["title"]);
 	});
 }
 
