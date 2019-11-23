@@ -25,8 +25,9 @@ function sendCUrlRequest(type, target){
 		console.log('stdout: ' + stdout); // Treatment to do here
 		StreamInfo = JSON.parse(stdout);
 		console.log(StreamInfo);
-		client.channels.get('614263675947188231').send("Le test stream se fait sur : "+StreamInfo["data"]["user_name"]);
-		client.channels.get('614263675947188231').send("Il streame actuellement avec le titre : "+StreamInfo["data"]["title"]);
+		userStreaming = StreamInfo["data"][0]
+		client.channels.get('614263675947188231').send("Le test stream se fait sur : "+userStreaming["user_name"]);
+		client.channels.get('614263675947188231').send("Il streame actuellement avec le titre : "+userStreaming["title"]);
 	});
 }
 
