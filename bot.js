@@ -23,11 +23,19 @@ function sendCUrlRequest(type, target){
 	}
 	exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+url+"'", function (error, stdout, stderr) {
 		console.log('stdout: ' + stdout); // Treatment to do here
-		StreamInfo = JSON.parse(stdout);
+		let StreamInfo = JSON.parse(stdout);
 		console.log(StreamInfo);
-		userStreaming = StreamInfo["data"][0]
-		client.channels.get('614263675947188231').send("Le test stream se fait sur : "+userStreaming["user_name"]);
-		client.channels.get('614263675947188231').send("Il streame actuellement avec le titre : "+userStreaming["title"]);
+		let userStreaming = StreamInfo["data"][0]
+		let channelLive = client.channels.get('614263675947188231');
+		channelLive.send("Le test stream se fait sur : "+userStreaming["user_name"]);
+		channelLive.send("Il streame actuellement avec le titre : "+userStreaming["title"]);
+		let embeddedInfo = new RichEmbed()
+		.setTitle(userStreaming["user_name"]+" est occupé à streamer ! Dépechez-vous !")
+		.setColor(0x02d414)
+		.setImage("https://i.ebayimg.com/images/g/kYsAAOSwTxhcHX-Y/s-l400.jpg")
+		.setTimestamp(userStreaming["timestamp"])
+		.setFooter("twitch.tv/"+userStreaming["user_name"]);
+		channelLive.send({"content":"Send message try...",embeddedInfo});
 	});
 }
 
