@@ -29,7 +29,7 @@ function sendCUrlRequest(type, target){
 		channelLive.send("Il streame actuellement avec le titre : "+userStreaming["title"]);
 		let message = userStreaming["user_name"]+" est en live !\nhttps://twitch.tv/"+userStreaming["user_name"];
 		let embeddedInfo = new Discord.RichEmbed()
-		.setTitle(userStreaming["user_name"]+" est occupé à streamer !\n"+userStreaming["title"])
+		.setTitle(userStreaming["user_name"]+" est en LIVE !\n"+userStreaming["title"])
 		.setColor(0x02d414)
 		.setImage("https://i.ebayimg.com/images/g/kYsAAOSwTxhcHX-Y/s-l400.jpg")
 		.setTimestamp(userStreaming["timestamp"])
