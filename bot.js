@@ -22,10 +22,10 @@ function sendCUrlRequest(type, target){
 		typeFound = true;
 	}
 	if(type === 'getGameInfo'){
-		let GameInfo = JSON.parse(execSync("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+url+"'");
+		let GameInfo = JSON.parse(execSync("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+url+"'"));
 	}
 	if(type == 'getStreamInfo'){
-		let StreamInfo = JSON.parse(execSync("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+url+"'");
+		let StreamInfo = JSON.parse(execSync("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+url+"'"));
 		let userStreaming = StreamInfo["data"][0]
 		let GameInfo = JSON.parse(sendCUrlRequest('getGameInfo', userStreaming["game_id"]));
 		let channelLive = client.channels.get('614263675947188231');
