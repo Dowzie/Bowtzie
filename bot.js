@@ -44,19 +44,19 @@ client.on('message', message => {
     }
 	 
     // Test Commands
-    if (message.content === '!testStream'){
-        sendCUrlRequest('getGameInfo', "493057");
-    }
+	if (message.content === '!testStream') {
+		sendCUrlRequest('getStreamInfo', 'locklear');
+	}
 
  
     // Fun Commands
     if (message.content === '!ping') {
        message.reply('pong');
     }
-    if (message.content.toLowerCase().includes('dovvzie', 0)){
+    /*if (message.content.toLowerCase().includes('dovvzie', 0)){
         message.channel.send('<@194524212134674432> c\'est un gros caca !');
         message.channel.send('<@253491625328771073> AUSSI !');
-    }
+    }*/
     if (message.content.toLowerCase().includes('faute de jezal',0)){
       message.reply('Tut tut tut ! Comme inscrit dans la constitution, c\'est la faute A Jezal !');
     }
@@ -104,6 +104,8 @@ client.on('presenceUpdate', (oldMember, newMember) => {
 	    client.channels.get('618917882151174165').send(':dovvziBOOP: Test LIVE') ;
     }
 });
+
+
 
  
 
