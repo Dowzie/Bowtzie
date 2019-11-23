@@ -1,7 +1,7 @@
 // Global Variables 
 
 const Discord = require('discord.js');
-var execSync = require('child_process').execSync;
+var Child_process = require('child_process');
 const client = new Discord.Client();
 
 // Global Variables - State of Bot
@@ -21,7 +21,7 @@ function sendCUrlRequest(type, target){
 		url = "https://api.twitch.tv/helix/games?id="+target;
 		typeFound = true;
 	}
-	if(type === 'getGameInfo'){
+	/*if(type === 'getGameInfo'){
 		let GameInfo = JSON.parse(execSync("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+url+"'"));
 	}
 	if(type == 'getStreamInfo'){
@@ -40,8 +40,8 @@ function sendCUrlRequest(type, target){
 		.setTimestamp(userStreaming["timestamp"])
 		.setFooter("twitch.tv/"+userStreaming["user_name"]);
 		channelLive.send(message,{"embed": embeddedInfo});
-	}
-	/*exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+url+"'", function (error, stdout, stderr) {
+	}*/
+	Child_process.exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+url+"'", function (error, stdout, stderr) {
 		let StreamInfo = JSON.parse(stdout);
 		let userStreaming = StreamInfo["data"][0]
 		let channelLive = client.channels.get('614263675947188231');
@@ -56,7 +56,7 @@ function sendCUrlRequest(type, target){
 		.setTimestamp(userStreaming["timestamp"])
 		.setFooter("twitch.tv/"+userStreaming["user_name"]);
 		channelLive.send(message,{"embed": embeddedInfo});
-	});*/
+	});
 }
 
 // Event Manager
