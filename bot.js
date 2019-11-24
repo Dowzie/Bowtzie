@@ -45,9 +45,12 @@ function sendCUrlRequest(type, target){
 			let game_info = JSON.parse(stdout);
 			let thumbnail = userStreaming["thumbnail_url"].replace(/{width}/, "356");
 			thumbnail = thumbnail.replace(/{height}/, "200");
+			let game_played = game_info.replace(/{width}/, "60");
+			game_played = game_played.replace(/{height}/, "80");
 			let embeddedInfo = new Discord.RichEmbed()
 			.setTitle(userStreaming["user_name"]+" est en LIVE !")
 			.setDescription(userStreaming["title"])
+			.setAuthor("Dowzie", url=game_played)
 			.setColor(0x02d414)
 			.addField('En live sur', game_info["data"][0]["name"], true)
 			.setImage(thumbnail)
