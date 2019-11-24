@@ -50,7 +50,7 @@ function sendCUrlRequest(type, target){
 			let embeddedInfo = new Discord.RichEmbed()
 			.setTitle(userStreaming["user_name"]+" est en LIVE !")
 			.setDescription(userStreaming["title"])
-			.setAuthor("Dowzie", url=game_played)
+			.setThumbnail(game_played)
 			.setColor(0x02d414)
 			.addField('En live sur', game_info["data"][0]["name"], true)
 			.setImage(thumbnail)
