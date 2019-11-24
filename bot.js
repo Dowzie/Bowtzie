@@ -42,11 +42,10 @@ function sendCUrlRequest(type, target){
 		channelLive.send(message,{"embed": embeddedInfo});
 	}*/
 	Child_process.exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+url+"'", function (error, stdout, stderr) {
+		console.log(type);
 		let StreamInfo = JSON.parse(stdout);
 		let userStreaming = StreamInfo["data"][0]
 		let channelLive = client.channels.get('614263675947188231');
-		channelLive.send("Le test stream se fait sur : "+userStreaming["user_name"]);
-		channelLive.send("Il streame actuellement avec le titre : "+userStreaming["title"]);
 		let message = userStreaming["user_name"]+" est en live !\nhttps://twitch.tv/"+userStreaming["user_name"];
 		let embeddedInfo = new Discord.RichEmbed()
 		.setTitle(userStreaming["user_name"]+" est en LIVE !")
