@@ -13,14 +13,7 @@ let lastGiveAway = null;
 function sendCUrlRequest(type, target){
 	var url = null;
 	var typeFound = false;
-	if (type === 'getStreamInfo'){
-		url = "https://api.twitch.tv/helix/streams?user_login="+target;
-		typeFound = true;
-	}
-	if(type === 'getGameInfo'){
-		url = "https://api.twitch.tv/helix/games?id="+target;
-		typeFound = true;
-	}
+	let stream_url = "https://api.twitch.tv/helix/streams?user_login="+target;
 	/*if(type === 'getGameInfo'){
 		let GameInfo = JSON.parse(execSync("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+url+"'"));
 	}
@@ -41,20 +34,24 @@ function sendCUrlRequest(type, target){
 		.setFooter("twitch.tv/"+userStreaming["user_name"]);
 		channelLive.send(message,{"embed": embeddedInfo});
 	}*/
-	Child_process.exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+url+"'", function (error, stdout, stderr) {
+	Child_process.exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+stream_url+"'", function (error, stdout, stderr) {
 		console.log(type);
 		let StreamInfo = JSON.parse(stdout);
 		let userStreaming = StreamInfo["data"][0]
 		let channelLive = client.channels.get('614263675947188231');
 		let message = userStreaming["user_name"]+" est en live !\nhttps://twitch.tv/"+userStreaming["user_name"];
-		let embeddedInfo = new Discord.RichEmbed()
-		.setTitle(userStreaming["user_name"]+" est en LIVE !")
-		.setColor(0x02d414)
-		.addField('En live sur', 'test', true)
-		.setImage("https://i.ebayimg.com/images/g/kYsAAOSwTxhcHX-Y/s-l400.jpg")
-		.setTimestamp(userStreaming["timestamp"])
-		.setFooter("twitch.tv/"+userStreaming["user_name"]);
-		channelLive.send(message,{"embed": embeddedInfo});
+		let game_url = "https://api.twitch.tv/helix/games?id="+userStreaming["game_id"];
+		Child_process.exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+game_url+"'", function (error, stdout, stderr) {
+			let game_info = JSON.parse(stdout);
+			let embeddedInfo = new Discord.RichEmbed()
+			.setTitle(userStreaming["user_name"]+" est en LIVE !")
+			.setColor(0x02d414)
+			.addField('En live sur', game_info["data"][0]["name"], true)
+			.setImage("https://i.ebayimg.com/images/g/kYsAAOSwTxhcHX-Y/s-l400.jpg")
+			.setTimestamp(userStreaming["timestamp"])
+			.setFooter("twitch.tv/"+userStreaming["user_name"]);
+			channelLive.send(message,{"embed": embeddedInfo});
+		});
 	});
 }
 
