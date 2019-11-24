@@ -48,7 +48,7 @@ function sendCUrlRequest(type, target){
 			.setDescription(userStreaming["title"])
 			.setColor(0x02d414)
 			.addField('En live sur', game_info["data"][0]["name"], true)
-			.setImage("https://i.ebayimg.com/images/g/kYsAAOSwTxhcHX-Y/s-l400.jpg")
+			.setImage(userStreaming["thumbnail_url"])
 			.setTimestamp(userStreaming["timestamp"])
 			.setFooter("twitch.tv/"+userStreaming["user_name"]);
 			channelLive.send(message,{"embed": embeddedInfo});
