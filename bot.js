@@ -43,8 +43,8 @@ function sendCUrlRequest(type, target){
 		let game_url = "https://api.twitch.tv/helix/games?id="+userStreaming["game_id"];
 		Child_process.exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+game_url+"'", function (error, stdout, stderr) {
 			let game_info = JSON.parse(stdout);
-			let thumbnail = userStreaming["thumbnail_url"].replace(/{width}/, "200");
-			thumbnail = thumbnail.replace(/{height}/, "266");
+			let thumbnail = userStreaming["thumbnail_url"].replace(/{width}/, "356");
+			thumbnail = thumbnail.replace(/{height}/, "200");
 			let embeddedInfo = new Discord.RichEmbed()
 			.setTitle(userStreaming["user_name"]+" est en LIVE !")
 			.setDescription(userStreaming["title"])
