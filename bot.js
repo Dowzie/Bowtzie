@@ -51,7 +51,7 @@ function sendCUrlRequest(type, target){
 		let embeddedInfo = new Discord.RichEmbed()
 		.setTitle(userStreaming["user_name"]+" est en LIVE !")
 		.setColor(0x02d414)
-		.addField('En live sur', '', true)
+		.addField('En live sur', 'test', true)
 		.setImage("https://i.ebayimg.com/images/g/kYsAAOSwTxhcHX-Y/s-l400.jpg")
 		.setTimestamp(userStreaming["timestamp"])
 		.setFooter("twitch.tv/"+userStreaming["user_name"]);
