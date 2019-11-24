@@ -45,6 +45,7 @@ function sendCUrlRequest(type, target){
 			let game_info = JSON.parse(stdout);
 			let embeddedInfo = new Discord.RichEmbed()
 			.setTitle(userStreaming["user_name"]+" est en LIVE !")
+			.setDescription(userStreaming["title"])
 			.setColor(0x02d414)
 			.addField('En live sur', game_info["data"][0]["name"], true)
 			.setImage("https://i.ebayimg.com/images/g/kYsAAOSwTxhcHX-Y/s-l400.jpg")
