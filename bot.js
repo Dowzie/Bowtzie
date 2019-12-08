@@ -122,7 +122,7 @@ client.on('presenceUpdate', (oldMember, newMember) => {
     }
 	// Test Geof
 	if (!oldMember.presence.game && newMember.presence.game && newMember.presence.game.streaming && newMember.id === '253491625328771073' && newMember.guild.id === '453232787944767498'){
-	    StreamInfo = sendCUrlRequest('getStreamInfo', 'geof2810', '614263675947188231');
+		setTimeout(function(){sendCUrlRequest('getStreamInfo', 'geof2810', '614263675947188231')}, 30000);
     }
 });
 
