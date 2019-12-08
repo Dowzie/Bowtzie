@@ -18,7 +18,7 @@ function sendCUrlRequest(type, target, channelID){
 		let StreamInfo = JSON.parse(stdout);
 		let userStreaming = StreamInfo["data"][0]
 		let channelLive = client.channels.get(channelID);
-		let message = userStreaming["user_name"]+" est en live ! <@everyone> \nhttps://twitch.tv/"+userStreaming["user_name"];
+		let message = userStreaming["user_name"]+" est en live ! @everyone \nhttps://twitch.tv/"+userStreaming["user_name"];
 		let game_url = "https://api.twitch.tv/helix/games?id="+userStreaming["game_id"];
 		Child_process.exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+game_url+"'", function (error, stdout, stderr) {
 			let game_info = JSON.parse(stdout);
