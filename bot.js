@@ -17,9 +17,7 @@ function sendCUrlRequest(type, target, channelID){
 	var typeFound = false;
 	let stream_url = "https://api.twitch.tv/helix/streams?user_login="+target;
 	Child_process.exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+stream_url+"'", function (error, stdout, stderr) {
-		if(stdout === undefined){
-			console.log("error : "+error);
-			console.log("stderr : "+stderr);
+		if(stdout === '{"data":[],"pagination":{}}'){
 			console.log("Retry in 5 seconds ...");
 			setTimeout(function(){sendCUrlRequest(type, target, channelID);}, 5000);
 		}
