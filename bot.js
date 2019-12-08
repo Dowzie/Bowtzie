@@ -59,7 +59,7 @@ client.on('message', message => {
 	 
     // Test Commands
 	if (message.content === '!testStream') {
-		StreamInfo = sendCUrlRequest('getStreamInfo', 'ZeratoR');
+		StreamInfo = sendCUrlRequest('getStreamInfo', 'ponce');
 	}
 
  
