@@ -61,7 +61,7 @@ client.on('message', message => {
 	 
     // Test Commands
 	if (message.content === '!testStream') {
-		StreamInfo = sendCUrlRequest('getStreamInfo', 'ponce', '614263675947188231');
+		StreamInfo = sendCUrlRequest('getStreamInfo', 'geof2810', '614263675947188231');
 	}
 
  
