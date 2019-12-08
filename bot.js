@@ -24,6 +24,7 @@ function sendCUrlRequest(type, target, channelID){
 			setTimeout(function(){sendCUrlRequest(type, target, channelID);}, 5000);
 		}
 		else{
+			console.log(stdout);
 			let StreamInfo = JSON.parse(stdout);
 			let userStreaming = StreamInfo["data"][0]
 			let channelLive = client.channels.get(channelID);
