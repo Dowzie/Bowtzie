@@ -12,14 +12,16 @@ let ChannelTestID = "614263675947188231";
 
 // Functions
 
-function sendCUrlRequest(type, target, channelID){
+function sendCUrlRequest(type, target, channelID, iter = 0){
 	var url = null;
 	var typeFound = false;
 	let stream_url = "https://api.twitch.tv/helix/streams?user_login="+target;
 	Child_process.exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+stream_url+"'", function (error, stdout, stderr) {
 		if(stdout === '{"data":[],"pagination":{}}'){
-			console.log("Retry in 10 seconds ...");
-			setTimeout(function(){sendCUrlRequest(type, target, channelID);}, 10000);
+			if(iter <= 120){
+				console.log("Retry in 10 seconds ...");
+				setTimeout(function(){sendCUrlRequest(type, target, channelID, iter + 1);}, 10000);
+			}
 		}
 		else{
 			console.log(stdout);
