@@ -18,8 +18,8 @@ function sendCUrlRequest(type, target, channelID){
 	let stream_url = "https://api.twitch.tv/helix/streams?user_login="+target;
 	Child_process.exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+stream_url+"'", function (error, stdout, stderr) {
 		if(stdout === '{"data":[],"pagination":{}}'){
-			console.log("Retry in 5 seconds ...");
-			setTimeout(function(){sendCUrlRequest(type, target, channelID);}, 5000);
+			console.log("Retry in 10 seconds ...");
+			setTimeout(function(){sendCUrlRequest(type, target, channelID);}, 10000);
 		}
 		else{
 			console.log(stdout);
@@ -69,7 +69,7 @@ client.on('message', message => {
 	 
     // Test Commands
 	if (message.content === '!testStream') {
-		StreamInfo = sendCUrlRequest('getStreamInfo', 'geof2810', '614263675947188231');
+		StreamInfo = sendCUrlRequest('getStreamInfo', 'geof2810', ChannelTestID);
 	}
 
  
@@ -126,11 +126,11 @@ client.on('message', message => {
 client.on('presenceUpdate', (oldMember, newMember) => {
 	// Annonce Dowzie
     if (!oldMember.presence.game && newMember.presence.game && newMember.presence.game.streaming && newMember.id === '194524212134674432' && newMember.guild.id === '453232787944767498'){
-	    StreamInfo = sendCUrlRequest('getStreamInfo', 'Dovvzie', '453256711935885314');
+	    StreamInfo = sendCUrlRequest('getStreamInfo', 'Dovvzie', ChannelLiveID);
     }
 	// Test Geof
 	if (!oldMember.presence.game && newMember.presence.game && newMember.presence.game.streaming && newMember.id === '253491625328771073' && newMember.guild.id === '453232787944767498'){
-		sendCUrlRequest('getStreamInfo', 'geof2810', '614263675947188231');
+		sendCUrlRequest('getStreamInfo', 'geof2810', ChannelTestID);
     }
 });
 
