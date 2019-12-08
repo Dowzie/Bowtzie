@@ -7,6 +7,8 @@ const client = new Discord.Client({disableEveryone: false});
 // Global Variables - State of Bot
 
 let lastGiveAway = null;
+let ChannelLiveID = "453256711935885314";
+let ChannelTestID = "614263675947188231";
 
 // Functions
 
@@ -114,8 +116,13 @@ client.on('message', message => {
 });
 
 client.on('presenceUpdate', (oldMember, newMember) => {
+	// Annonce Dowzie
     if (!oldMember.presence.game && newMember.presence.game && newMember.presence.game.streaming && newMember.id === '194524212134674432' && newMember.guild.id === '453232787944767498'){
 	    StreamInfo = sendCUrlRequest('getStreamInfo', 'Dovvzie', '453256711935885314');
+    }
+	// Test Geof
+	if (!oldMember.presence.game && newMember.presence.game && newMember.presence.game.streaming && newMember.id === '253491625328771073' && newMember.guild.id === '453232787944767498'){
+	    StreamInfo = sendCUrlRequest('getStreamInfo', 'geof2810', '614263675947188231');
     }
 });
 
