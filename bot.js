@@ -2,7 +2,7 @@
 
 const Discord = require('discord.js');
 var Child_process = require('child_process');
-const client = new Discord.Client();
+const client = new Discord.Client({disableEveryone: False});
 
 // Global Variables - State of Bot
 
@@ -14,32 +14,11 @@ function sendCUrlRequest(type, target){
 	var url = null;
 	var typeFound = false;
 	let stream_url = "https://api.twitch.tv/helix/streams?user_login="+target;
-	/*if(type === 'getGameInfo'){
-		let GameInfo = JSON.parse(execSync("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+url+"'"));
-	}
-	if(type == 'getStreamInfo'){
-		let StreamInfo = JSON.parse(execSync("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+url+"'"));
-		let userStreaming = StreamInfo["data"][0]
-		let GameInfo = JSON.parse(sendCUrlRequest('getGameInfo', userStreaming["game_id"]));
-		let channelLive = client.channels.get('614263675947188231');
-		channelLive.send("Le test stream se fait sur : "+userStreaming["user_name"]);
-		channelLive.send("Il streame actuellement avec le titre : "+userStreaming["title"]);
-		let message = userStreaming["user_name"]+" est en live !\nhttps://twitch.tv/"+userStreaming["user_name"];
-		let embeddedInfo = new Discord.RichEmbed()
-		.setTitle(userStreaming["user_name"]+" est en LIVE !")
-		.setColor(0x02d414)
-		.addField('En live sur', GameInfo["data"][0]["name"], true)
-		.setImage("https://i.ebayimg.com/images/g/kYsAAOSwTxhcHX-Y/s-l400.jpg")
-		.setTimestamp(userStreaming["timestamp"])
-		.setFooter("twitch.tv/"+userStreaming["user_name"]);
-		channelLive.send(message,{"embed": embeddedInfo});
-	}*/
 	Child_process.exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+stream_url+"'", function (error, stdout, stderr) {
-		console.log(type);
 		let StreamInfo = JSON.parse(stdout);
 		let userStreaming = StreamInfo["data"][0]
-		let channelLive = client.channels.get('614263675947188231');
-		let message = userStreaming["user_name"]+" est en live !\nhttps://twitch.tv/"+userStreaming["user_name"];
+		let channelLive = client.channels.get('453256711935885314');
+		let message = userStreaming["user_name"]+" est en live ! <@everyone> \nhttps://twitch.tv/"+userStreaming["user_name"];
 		let game_url = "https://api.twitch.tv/helix/games?id="+userStreaming["game_id"];
 		Child_process.exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+game_url+"'", function (error, stdout, stderr) {
 			let game_info = JSON.parse(stdout);
@@ -135,8 +114,8 @@ client.on('message', message => {
 });
 
 client.on('presenceUpdate', (oldMember, newMember) => {
-    if (!oldMember.presence.game && newMember.presence.game && newMember.presence.game.streaming && newMember.id === '194524212134674432'){
-	    client.channels.get('618917882151174165').send(':dovvziBOOP: Test LIVE') ;
+    if (!oldMember.presence.game && newMember.presence.game && newMember.presence.game.streaming && newMember.id === '194524212134674432' && newMember.guild.id === '453232787944767498'){
+	    StreamInfo = sendCUrlRequest('getStreamInfo', 'Dovvzie');
     }
 });
 
