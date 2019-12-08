@@ -10,14 +10,14 @@ let lastGiveAway = null;
 
 // Functions
 
-function sendCUrlRequest(type, target){
+function sendCUrlRequest(type, target, channelID){
 	var url = null;
 	var typeFound = false;
 	let stream_url = "https://api.twitch.tv/helix/streams?user_login="+target;
 	Child_process.exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+stream_url+"'", function (error, stdout, stderr) {
 		let StreamInfo = JSON.parse(stdout);
 		let userStreaming = StreamInfo["data"][0]
-		let channelLive = client.channels.get('453256711935885314');
+		let channelLive = client.channels.get(channelID);
 		let message = userStreaming["user_name"]+" est en live ! <@everyone> \nhttps://twitch.tv/"+userStreaming["user_name"];
 		let game_url = "https://api.twitch.tv/helix/games?id="+userStreaming["game_id"];
 		Child_process.exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+game_url+"'", function (error, stdout, stderr) {
@@ -59,7 +59,7 @@ client.on('message', message => {
 	 
     // Test Commands
 	if (message.content === '!testStream') {
-		StreamInfo = sendCUrlRequest('getStreamInfo', 'ponce');
+		StreamInfo = sendCUrlRequest('getStreamInfo', 'ponce', '614263675947188231');
 	}
 
  
@@ -115,7 +115,7 @@ client.on('message', message => {
 
 client.on('presenceUpdate', (oldMember, newMember) => {
     if (!oldMember.presence.game && newMember.presence.game && newMember.presence.game.streaming && newMember.id === '194524212134674432' && newMember.guild.id === '453232787944767498'){
-	    StreamInfo = sendCUrlRequest('getStreamInfo', 'Dovvzie');
+	    StreamInfo = sendCUrlRequest('getStreamInfo', 'Dovvzie', '453256711935885314');
     }
 });
 
