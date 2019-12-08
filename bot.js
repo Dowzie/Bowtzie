@@ -2,7 +2,7 @@
 
 const Discord = require('discord.js');
 var Child_process = require('child_process');
-const client = new Discord.Client({disableEveryone: False});
+const client = new Discord.Client({disableEveryone: false});
 
 // Global Variables - State of Bot
 
