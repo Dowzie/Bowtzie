@@ -126,9 +126,14 @@ client.on('message', message => {
 });
 
 client.on('presenceUpdate', (oldMember, newMember) => {
-	// Annonce Dowzie
-    if (!oldMember.presence.game && newMember.presence.game && newMember.presence.game.streaming && newMember.id === '194524212134674432' && newMember.guild.id === '453232787944767498'){
-	    StreamInfo = sendCUrlRequest('getStreamInfo', 'Dovvzie', ChannelLiveID);
+	// Annonce Dowzie & Chouchou
+    if (!oldMember.presence.game && newMember.presence.game && newMember.presence.game.streaming && newMember.guild.id === '453232787944767498'){
+	    if(newMember.id === '194524212134674432'){
+		    StreamInfo = sendCUrlRequest('getStreamInfo', 'Dovvzie', ChannelLiveID);
+	    }
+	    if(newMember.id === '283740549448597505'){
+		    StreamInfo = sendCUrlRequest('getStreamInfo', 'Chouchougeekart', ChannelLiveID);
+	    } 
     }
 	// Test Geof
 	if (!oldMember.presence.game && newMember.presence.game && newMember.presence.game.streaming && newMember.id === '253491625328771073' && newMember.guild.id === '453232787944767498'){
