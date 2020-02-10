@@ -94,7 +94,7 @@ client.on('message', message => {
         message.channel.send('J\'ai entendu Pizza et Ananas dans la même phrase, j\'espere que vous ne mangez pas ca ! \n https://tenor.com/view/ew-disgust-gif-3671501');
     }
 	if (message.content.toLowerCase().includes('pizza', 0) && message.content.toLowerCase().includes('ananas')){
-        message.reply({files: ['./nutella.gif']);
+        message.reply({files: ['./nutella.gif']});
     }
     if (message.content.toLowerCase().includes('giveaway', 0) && currTimeStamp - lastGiveAway > 14400000){
 		message.channel.send('Comment ?! J\'ai entendu giveaway ? je préviens tout de suite <@253491625328771073> !');
