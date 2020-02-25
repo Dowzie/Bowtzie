@@ -80,6 +80,7 @@ function sendCUrlRequestAlways(type, target, channelID){
 		else{
 			console.log(stdout);
 			if(ChannelOnLive[target] == 0){
+				ChannelOnLive[target] = 1;
 				let StreamInfo = JSON.parse(stdout);
 				let userStreaming = StreamInfo["data"][0]
 				let channelLive = client.channels.get(channelID);
