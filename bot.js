@@ -132,7 +132,7 @@ client.on('ready', () => {
 	//setInterval(function(){sendCUrlRequestAlways('getStreamInfo', 'geof2810', ChannelTestID);}, 10000);
 	setInterval(function(){sendCUrlRequestAlways('getStreamInfo', 'Dovvzie', ChannelLiveID);}, 10000);
 	setInterval(function(){sendCUrlRequestAlways('getStreamInfo', 'Chouchougeekart', ChannelLiveID);}, 10000);
-	setInterval(function(){sendCUrlRequestAlways('getStreamInfo', 'liguecosplay', ChannelTestID);}, 10000);
+	setInterval(function(){sendCUrlRequestAlways('getStreamInfo', 'liguecosplay', ChannelLigueID);}, 10000);
 });
 
 
