@@ -76,7 +76,7 @@ function sendCUrlRequestAlways(type, target, channelID){
 	Child_process.exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+stream_url+"'", function (error, stdout, stderr) {
 		if(stdout === '{"data":[],"pagination":{}}'){
 			console.log("Streaming of "+ target + " unreachable... Retry in 10 seconds ...");
-			ChannelOnLive["geof2810"] = 0;
+			ChannelOnLive[target] = 0;
 		}
 		else{
 			if(ChannelOnLive[target] == 0){
