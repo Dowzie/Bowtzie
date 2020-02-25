@@ -9,6 +9,7 @@ const client = new Discord.Client({disableEveryone: false});
 let lastGiveAway = null;
 let ChannelLiveID = "453256711935885314";
 let ChannelTestID = "614263675947188231";
+let ChannelOnLive = {"Chouchougeekart": 0, "Dovvzie": 0, "geof2810": 0,"liguecosplay": 0};
 
 // Functions
 
@@ -73,47 +74,50 @@ function sendCUrlRequestAlways(type, target, channelID){
 	let stream_url = "https://api.twitch.tv/helix/streams?user_login="+target;
 	Child_process.exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+stream_url+"'", function (error, stdout, stderr) {
 		if(stdout === '{"data":[],"pagination":{}}'){
-			console.log("Streaming of "+ target + " unreachable... Retry in 30 seconds ...");
+			console.log("Streaming of "+ target + " unreachable... Retry in 10 seconds ...");
+			ChannelOnLive["geof2810"] = 0;
 		}
 		else{
 			console.log(stdout);
-			let StreamInfo = JSON.parse(stdout);
-			let userStreaming = StreamInfo["data"][0]
-			let channelLive = client.channels.get(channelID);
-			let message = userStreaming["user_name"]+" est en live ! @everyone \nhttps://twitch.tv/"+userStreaming["user_name"];
-			if(userStreaming["game_id"]){
-				let game_url = "https://api.twitch.tv/helix/games?id="+userStreaming["game_id"];
-				Child_process.exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+game_url+"'", function (error, stdout, stderr) {
-					let game_info = JSON.parse(stdout);
+			if(ChannelOnLive[target] == 0){
+				let StreamInfo = JSON.parse(stdout);
+				let userStreaming = StreamInfo["data"][0]
+				let channelLive = client.channels.get(channelID);
+				let message = userStreaming["user_name"]+" est en live ! @everyone \nhttps://twitch.tv/"+userStreaming["user_name"];
+				if(userStreaming["game_id"]){
+					let game_url = "https://api.twitch.tv/helix/games?id="+userStreaming["game_id"];
+					Child_process.exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+game_url+"'", function (error, stdout, stderr) {
+						let game_info = JSON.parse(stdout);
+						let thumbnail = userStreaming["thumbnail_url"].replace(/{width}/, "356");
+						thumbnail = thumbnail.replace(/{height}/, "200");
+						let game_played = game_info["data"][0]["box_art_url"].replace(/{width}/, "60");
+						game_played = game_played.replace(/{height}/, "80");
+						let embeddedInfo = new Discord.RichEmbed()
+						.setTitle(userStreaming["user_name"]+" est en LIVE !")
+						.setDescription(userStreaming["title"])
+						.setThumbnail(game_played)
+						.setColor(0x02d414)
+						.addField('En live sur', game_info["data"][0]["name"], true)
+						.setImage(thumbnail)
+						.setTimestamp(userStreaming["timestamp"])
+						.setFooter("twitch.tv/"+userStreaming["user_name"]);
+						channelLive.send(message,{"embed": embeddedInfo});
+						console.log("Twitch stream detected");
+					});
+				}
+				else{
 					let thumbnail = userStreaming["thumbnail_url"].replace(/{width}/, "356");
 					thumbnail = thumbnail.replace(/{height}/, "200");
-					let game_played = game_info["data"][0]["box_art_url"].replace(/{width}/, "60");
-					game_played = game_played.replace(/{height}/, "80");
 					let embeddedInfo = new Discord.RichEmbed()
-					.setTitle(userStreaming["user_name"]+" est en LIVE !")
-					.setDescription(userStreaming["title"])
-					.setThumbnail(game_played)
-					.setColor(0x02d414)
-					.addField('En live sur', game_info["data"][0]["name"], true)
-					.setImage(thumbnail)
-					.setTimestamp(userStreaming["timestamp"])
-					.setFooter("twitch.tv/"+userStreaming["user_name"]);
+						.setTitle(userStreaming["user_name"]+" est en LIVE !")
+						.setDescription(userStreaming["title"])
+						.setImage(thumbnail)
+						.setColor(0x02d414)
+						.setTimestamp(userStreaming["timestamp"])
+						.setFooter("twitch.tv/"+userStreaming["user_name"]);
 					channelLive.send(message,{"embed": embeddedInfo});
-					console.log("Twitch stream detected");
-				});
-			}
-			else{
-				let thumbnail = userStreaming["thumbnail_url"].replace(/{width}/, "356");
-				thumbnail = thumbnail.replace(/{height}/, "200");
-				let embeddedInfo = new Discord.RichEmbed()
-					.setTitle(userStreaming["user_name"]+" est en LIVE !")
-					.setDescription(userStreaming["title"])
-					.setImage(thumbnail)
-					.setColor(0x02d414)
-					.setTimestamp(userStreaming["timestamp"])
-					.setFooter("twitch.tv/"+userStreaming["user_name"]);
-				channelLive.send(message,{"embed": embeddedInfo});
-				console.log("Twitch stream without category detected");
+					console.log("Twitch stream without category detected");
+				}
 			}
 		}		
 	});
@@ -123,7 +127,7 @@ function sendCUrlRequestAlways(type, target, channelID){
 
 client.on('ready', () => {
     console.log('I am ready!');
-	//setInterval(function(){sendCUrlRequestAlways('getStreamInfo', 'geof2810', ChannelTestID);}, 30000);
+	setInterval(function(){sendCUrlRequestAlways('getStreamInfo', 'geof2810', ChannelTestID);}, 10000);
 });
 
 
