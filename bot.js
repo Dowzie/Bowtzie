@@ -8,6 +8,7 @@ const client = new Discord.Client({disableEveryone: false});
 
 let lastGiveAway = null;
 let ChannelLiveID = "453256711935885314";
+let ChannelLigueID = "665954885879201792";
 let ChannelTestID = "614263675947188231";
 let ChannelOnLive = {"Chouchougeekart": 0, "Dovvzie": 0, "geof2810": 0,"liguecosplay": 0};
 
@@ -128,7 +129,10 @@ function sendCUrlRequestAlways(type, target, channelID){
 
 client.on('ready', () => {
     console.log('I am ready!');
-	setInterval(function(){sendCUrlRequestAlways('getStreamInfo', 'geof2810', ChannelTestID);}, 10000);
+	//setInterval(function(){sendCUrlRequestAlways('getStreamInfo', 'geof2810', ChannelTestID);}, 10000);
+	setInterval(function(){sendCUrlRequestAlways('getStreamInfo', 'Dovvzie', ChannelLiveID);}, 10000);
+	setInterval(function(){sendCUrlRequestAlways('getStreamInfo', 'Chouchougeekart', ChannelLiveID);}, 10000);
+	setInterval(function(){sendCUrlRequestAlways('getStreamInfo', 'liguecosplay', ChannelTestID);}, 10000);
 });
 
 
