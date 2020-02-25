@@ -78,8 +78,8 @@ function sendCUrlRequestAlways(type, target, channelID){
 			ChannelOnLive["geof2810"] = 0;
 		}
 		else{
-			console.log(stdout);
 			if(ChannelOnLive[target] == 0){
+				console.log(stdout);
 				ChannelOnLive[target] = 1;
 				let StreamInfo = JSON.parse(stdout);
 				let userStreaming = StreamInfo["data"][0]
