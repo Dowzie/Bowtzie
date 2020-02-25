@@ -29,25 +29,37 @@ function sendCUrlRequest(type, target, channelID, iter = 0){
 			let userStreaming = StreamInfo["data"][0]
 			let channelLive = client.channels.get(channelID);
 			let message = userStreaming["user_name"]+" est en live ! @everyone \nhttps://twitch.tv/"+userStreaming["user_name"];
-			let game_url = "https://api.twitch.tv/helix/games?id="+userStreaming["game_id"];
-			Child_process.exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+game_url+"'", function (error, stdout, stderr) {
-				let game_info = JSON.parse(stdout);
-				let thumbnail = userStreaming["thumbnail_url"].replace(/{width}/, "356");
-				thumbnail = thumbnail.replace(/{height}/, "200");
-				let game_played = game_info["data"][0]["box_art_url"].replace(/{width}/, "60");
-				game_played = game_played.replace(/{height}/, "80");
+			if(userStreaming["game_id"]){
+				let game_url = "https://api.twitch.tv/helix/games?id="+userStreaming["game_id"];
+				Child_process.exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+game_url+"'", function (error, stdout, stderr) {
+					let game_info = JSON.parse(stdout);
+					let thumbnail = userStreaming["thumbnail_url"].replace(/{width}/, "356");
+					thumbnail = thumbnail.replace(/{height}/, "200");
+					let game_played = game_info["data"][0]["box_art_url"].replace(/{width}/, "60");
+					game_played = game_played.replace(/{height}/, "80");
+					let embeddedInfo = new Discord.RichEmbed()
+					.setTitle(userStreaming["user_name"]+" est en LIVE !")
+					.setDescription(userStreaming["title"])
+					.setThumbnail(game_played)
+					.setColor(0x02d414)
+					.addField('En live sur', game_info["data"][0]["name"], true)
+					.setImage(thumbnail)
+					.setTimestamp(userStreaming["timestamp"])
+					.setFooter("twitch.tv/"+userStreaming["user_name"]);
+					channelLive.send(message,{"embed": embeddedInfo});
+					console.log("Twitch stream detected");
+				});
+			}
+			else{
 				let embeddedInfo = new Discord.RichEmbed()
-				.setTitle(userStreaming["user_name"]+" est en LIVE !")
-				.setDescription(userStreaming["title"])
-				.setThumbnail(game_played)
-				.setColor(0x02d414)
-				.addField('En live sur', game_info["data"][0]["name"], true)
-				.setImage(thumbnail)
-				.setTimestamp(userStreaming["timestamp"])
-				.setFooter("twitch.tv/"+userStreaming["user_name"]);
+					.setTitle(userStreaming["user_name"]+" est en LIVE !")
+					.setDescription(userStreaming["title"])
+					.setColor(0x02d414)
+					.setTimestamp(userStreaming["timestamp"])
+					.setFooter("twitch.tv/"+userStreaming["user_name"]);
 				channelLive.send(message,{"embed": embeddedInfo});
-				console.log("Twitch stream detected");
-			});
+				console.log("Twitch stream without category detected");
+			}
 		}		
 	});
 }
@@ -140,7 +152,7 @@ client.on('presenceUpdate', (oldMember, newMember) => {
     }
 	// Test Geof
 	if (!oldMember.presence.game && newMember.presence.game && newMember.presence.game.streaming && newMember.id === '253491625328771073' && newMember.guild.id === '453232787944767498'){
-		sendCUrlRequest('getStreamInfo', 'geof2810', ChannelTestID);
+		StreamInfo = sendCUrlRequest('getStreamInfo', 'geof2810', ChannelTestID);
     }
 });
 
