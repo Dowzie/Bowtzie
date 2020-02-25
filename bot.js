@@ -123,8 +123,7 @@ function sendCUrlRequestAlways(type, target, channelID){
 
 client.on('ready', () => {
     console.log('I am ready!');
-	setInterval(function(){sendCUrlRequestAlways('getStreamInfo', 'geof2810', ChannelTestID);}, 30000);
-
+	//setInterval(function(){sendCUrlRequestAlways('getStreamInfo', 'geof2810', ChannelTestID);}, 30000);
 });
 
 
