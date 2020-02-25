@@ -10,7 +10,7 @@ let lastGiveAway = null;
 let ChannelLiveID = "453256711935885314";
 let ChannelLigueID = "665954885879201792";
 let ChannelTestID = "614263675947188231";
-let ChannelOnLive = {"Chouchougeekart": 0, "Dovvzie": 0, "geof2810": 0,"liguecosplay": 0};
+let ChannelOnLive = {"Chouchougeekart": 1, "Dovvzie": 1, "geof2810": 1,"liguecosplay": 1};
 
 // Functions
 
