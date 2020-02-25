@@ -205,7 +205,7 @@ client.on('message', message => {
 
 });
 
-client.on('presenceUpdate', (oldMember, newMember) => {
+/*client.on('presenceUpdate', (oldMember, newMember) => {
 	// Annonce Dowzie & Chouchou
     if (!oldMember.presence.game && newMember.presence.game && newMember.presence.game.streaming && newMember.guild.id === '453232787944767498'){
 	    if(newMember.id === '194524212134674432'){
@@ -219,7 +219,7 @@ client.on('presenceUpdate', (oldMember, newMember) => {
 	if (!oldMember.presence.game && newMember.presence.game && newMember.presence.game.streaming && newMember.id === '253491625328771073' && newMember.guild.id === '453232787944767498'){
 		StreamInfo = sendCUrlRequest('getStreamInfo', 'geof2810', ChannelTestID);
     }
-});
+});*/
 
 
 
