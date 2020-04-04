@@ -8,7 +8,7 @@ const client = new Discord.Client({disableEveryone: false});
 
 let lastGiveAway = null;
 let ChannelLiveID = "453256711935885314";
-let ChannelLigueID = "665954885879201792";
+let ChannelLigueID = "695943025855037440";
 let ChannelTestID = "614263675947188231";
 let ChannelOnLive = {"Chouchougeekart": 1, "Dovvzie": 1, "geof2810": 1,"liguecosplay": 1};
 
