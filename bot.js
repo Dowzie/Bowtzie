@@ -23,6 +23,7 @@ function twitch_authentication(){
 		if(stderr){
 			console.log(stderr);
 		}
+		console.log("ok");
 		console.log("twitch authentication : "+stdout);
 	}
 }
