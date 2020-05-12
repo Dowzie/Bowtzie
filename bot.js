@@ -14,9 +14,13 @@ let ChannelOnLive = {"Chouchougeekart": 1, "Dovvzie": 1, "geof2810": 1,"liguecos
 
 // Functions
 
+function twitch_authentication(){
+	Child_process.exec("curl -X POST https://id.twitch.tv/oauth2/token?client_id="+process.env.CLIENT_ID+"&client_secret="+process.env.CLIENT_SECRET+"&grant_type=client_credentials"), function (error, stdout, stderr){
+		console.log(stdout);
+	}
+}
+
 function sendCUrlRequest(type, target, channelID, iter = 0){
-	var url = null;
-	var typeFound = false;
 	let stream_url = "https://api.twitch.tv/helix/streams?user_login="+target;
 	Child_process.exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+stream_url+"'", function (error, stdout, stderr) {
 		var response = JSON.parse(stdout);
@@ -162,7 +166,9 @@ client.on('message', message => {
 	 
     // Test Commands
 	if (message.content === '!testStream') {
-		StreamInfo = sendCUrlRequest('getStreamInfo', 'geof2810', ChannelTestID);
+		twitch_authentication();
+		sendCUrlRequest('getStreamInfo', 'geof2810', ChannelTestID);
+
 	}
 
  
@@ -215,29 +221,7 @@ client.on('message', message => {
 		message.channel.send({files: ['./hipsterdabv2.gif']});
 	}
  }
- 
-
 });
-
-/*client.on('presenceUpdate', (oldMember, newMember) => {
-	// Annonce Dowzie & Chouchou
-    if (!oldMember.presence.game && newMember.presence.game && newMember.presence.game.streaming && newMember.guild.id === '453232787944767498'){
-	    if(newMember.id === '194524212134674432'){
-		    StreamInfo = sendCUrlRequest('getStreamInfo', 'Dovvzie', ChannelLiveID);
-	    }
-	    if(newMember.id === '283740549448597505'){
-		    StreamInfo = sendCUrlRequest('getStreamInfo', 'Chouchougeekart', ChannelLiveID);
-	    } 
-    }
-	// Test Geof
-	if (!oldMember.presence.game && newMember.presence.game && newMember.presence.game.streaming && newMember.id === '253491625328771073' && newMember.guild.id === '453232787944767498'){
-		StreamInfo = sendCUrlRequest('getStreamInfo', 'geof2810', ChannelTestID);
-    }
-});*/
-
-
-
- 
 
 // THIS  MUST  BE  THIS  WAY
 
