@@ -19,6 +19,9 @@ function twitch_authentication(){
 		if(error){
 			throw error;
 		}
+		if(stderr){
+			console.log(stderr);
+		}
 		console.log("twitch authentication : "+stdout);
 	}
 }
