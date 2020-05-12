@@ -31,7 +31,18 @@ function twitch_authentication(){
 	const req = https.request(options, res => {
 		console.log('statusCode :'+res.statusCode);
 		console.log(res);
+
+		res.on('data', d => {
+			process.stdout.write(d)
+		})
 	})
+
+	req.on('error', error => {
+		console.error(error);
+	})
+
+	req.write("");
+	req.end();
 
 	Child_process.exec("curl -X POST 'https://id.twitch.tv/oauth2/token?client_id="+process.env.CLIENT_ID+"&client_secret="+process.env.CLIENT_SECRET+"&grant_type=client_credentials'"), function (error, stdout, stderr){
 		if(error){
