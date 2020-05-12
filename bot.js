@@ -19,8 +19,9 @@ function sendCUrlRequest(type, target, channelID, iter = 0){
 	var typeFound = false;
 	let stream_url = "https://api.twitch.tv/helix/streams?user_login="+target;
 	Child_process.exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+stream_url+"'", function (error, stdout, stderr) {
-	    if(error){
-	        throw error;
+		var response = JSON.parse(stdout);
+	    if(response.hasOwnProperty('error')){
+	        console.log(stdout);
         }
 	    else{
 			if(stdout === '{"data":[],"pagination":{}}'){
@@ -80,8 +81,9 @@ function sendCUrlRequestAlways(type, target, channelID){
 	var typeFound = false;
 	let stream_url = "https://api.twitch.tv/helix/streams?user_login="+target;
 	Child_process.exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+stream_url+"'", function (error, stdout, stderr) {
-		if(error){
-			throw error;
+		var response = JSON.parse(stdout);
+		if(response.hasOwnProperty('error')){
+			console.log(stdout);
 		}
 		else{
 			if(stdout === '{"data":[],"pagination":{}}'){
@@ -142,9 +144,9 @@ function sendCUrlRequestAlways(type, target, channelID){
 client.on('ready', () => {
     console.log('I am ready!');
 	//setInterval(function(){sendCUrlRequestAlways('getStreamInfo', 'geof2810', ChannelTestID);}, 10000);
-	setInterval(function(){sendCUrlRequestAlways('getStreamInfo', 'Dovvzie', ChannelLiveID);}, 10000);
-	setInterval(function(){sendCUrlRequestAlways('getStreamInfo', 'Chouchougeekart', ChannelLiveID);}, 10000);
-	setInterval(function(){sendCUrlRequestAlways('getStreamInfo', 'liguecosplay', ChannelLigueID);}, 10000);
+	//setInterval(function(){sendCUrlRequestAlways('getStreamInfo', 'Dovvzie', ChannelLiveID);}, 10000);
+	//setInterval(function(){sendCUrlRequestAlways('getStreamInfo', 'Chouchougeekart', ChannelLiveID);}, 10000);
+	//setInterval(function(){sendCUrlRequestAlways('getStreamInfo', 'liguecosplay', ChannelLigueID);}, 10000);
 });
 
 
