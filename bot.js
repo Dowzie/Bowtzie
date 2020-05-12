@@ -21,12 +21,18 @@ function twitch_authentication(){
 	const options = {
 		hostname: 'id.twitch.tv',
 		port: 443,
-		path: '/oauth2/token?client_id='+process.env.CLIENT_ID+'&client_secret='+process.env.CLIENT_SECRET+'&grant_type=client_credentials',
+		path: '/oauth2/token',
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
 		}
 	}
+
+	const data = JSON.stringify({
+		client_id: process.env.CLIENT_ID,
+		client_secret: process.env.CLIENT_SECRET,
+		grant_type: "client_credentials"
+	});
 
 	const req = https.request(options, res => {
 		console.log('statusCode :'+res.statusCode);
@@ -35,26 +41,14 @@ function twitch_authentication(){
 		res.on('data', d => {
 			process.stdout.write(d)
 		})
-	})
+	});
 
 	req.on('error', error => {
 		console.error(error);
-	})
+	});
 
-	req.write("");
+	req.write(data);
 	req.end();
-
-	Child_process.exec("curl -X POST 'https://id.twitch.tv/oauth2/token?client_id="+process.env.CLIENT_ID+"&client_secret="+process.env.CLIENT_SECRET+"&grant_type=client_credentials'"), function (error, stdout, stderr){
-		if(error){
-			console.log(error);
-			throw error;
-		}
-		if(stderr){
-			console.log(stderr);
-		}
-		console.log("ok");
-		console.log("twitch authentication : "+stdout);
-	}
 }
 
 function sendCUrlRequest(type, target, channelID, iter = 0){
