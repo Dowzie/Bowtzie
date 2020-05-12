@@ -16,7 +16,7 @@ let ChannelOnLive = {"Chouchougeekart": 1, "Dovvzie": 1, "geof2810": 1,"liguecos
 
 function twitch_authentication(){
 	console.log("Twitch authentication test");
-	Child_process.exec("curl -X POST https://id.twitch.tv/oauth2/token?client_id="+process.env.CLIENT_ID+"&client_secret="+process.env.CLIENT_SECRET+"&grant_type=client_credentials"), function (error, stdout, stderr){
+	Child_process.exec("curl -X POST 'https://id.twitch.tv/oauth2/token?client_id="+process.env.CLIENT_ID+"&client_secret="+process.env.CLIENT_SECRET+"&grant_type=client_credentials'"), function (error, stdout, stderr){
 		if(error){
 			throw error;
 		}
