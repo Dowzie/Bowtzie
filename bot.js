@@ -1,6 +1,7 @@
 // Global Variables 
 
 const Discord = require('discord.js');
+const https = require('https');
 var Child_process = require('child_process');
 const client = new Discord.Client({disableEveryone: false});
 
@@ -16,6 +17,22 @@ let ChannelOnLive = {"Chouchougeekart": 1, "Dovvzie": 1, "geof2810": 1,"liguecos
 
 function twitch_authentication(){
 	console.log("Twitch authentication test");
+
+	const options = {
+		hostname: 'id.twitch.tv',
+		port: 443,
+		path: '/oauth2/token?client_id='+process.env.CLIENT_ID+'&client_secret='+process.env.CLIENT_SECRET+'&grant_type=client_credentials',
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		}
+	}
+
+	const req = https.request(options, res => {
+		console.log('statusCode :'+res.statusCode);
+		console.log(res);
+	})
+
 	Child_process.exec("curl -X POST 'https://id.twitch.tv/oauth2/token?client_id="+process.env.CLIENT_ID+"&client_secret="+process.env.CLIENT_SECRET+"&grant_type=client_credentials'"), function (error, stdout, stderr){
 		if(error){
 			console.log(error);
