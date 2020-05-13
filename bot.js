@@ -7,6 +7,12 @@ const client = new Discord.Client({disableEveryone: false});
 
 // Global Variables - State of Bot
 
+// >> Twitch Variables
+let access_token = null;
+let refresh_token = null;
+let expires_token = null;
+
+// >> Discord Variables
 let lastGiveAway = null;
 let ChannelLiveID = "453256711935885314";
 let ChannelLigueID = "695943025855037440";
@@ -16,16 +22,12 @@ let ChannelOnLive = {"Chouchougeekart": 1, "Dovvzie": 1, "geof2810": 1,"liguecos
 // Functions
 
 function twitch_authentication(){
-	console.log("Twitch authentication test");
-
 	const options = {
 		hostname: 'id.twitch.tv',
 		port: 443,
 		path: '/oauth2/token',
 		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		}
+		headers: {'Content-Type': 'application/json'}
 	}
 
 	const data = JSON.stringify({
@@ -35,17 +37,48 @@ function twitch_authentication(){
 	});
 
 	const req = https.request(options, res => {
-		console.log('statusCode :'+res.statusCode);
-		console.log(res);
+		if(res.statusCode !== 200){
+			console.log('statusCode :'+res.statusCode)
+		}
 
 		res.on('data', d => {
+			let data_result = JSON.parse(d)
+			access_token = data_result["access_token"]
+			refresh_token = data_result["refresh_token"]
+			expires_token = data_result["expires_in"]
 			process.stdout.write(d)
 		})
 	});
 
-	req.on('error', error => {
-		console.error(error);
-	});
+	req.on('error', error => {console.error(error)})
+
+	req.write(data);
+	req.end();
+}
+
+function stream_notification(target){
+	const options = {
+		hostname: 'api.twitch.tv',
+		port: 443,
+		path: '/helix/streams',
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+			'Client-ID': process.env.CLIENT_ID,
+			'Authorization': 'Bearer ' + access_token
+		}
+	}
+
+	const data = JSON.stringify({user_login: target})
+
+	const req = https.request(options, res => {
+		if(res.statusCode !== 200){
+			console.log("statusCode :"+res.statusCode);
+		}
+		res.on('data', d => {process.stdout.write(d)})
+	})
+
+	req.on('error', error => {console.error(error)})
 
 	req.write(data);
 	req.end();
@@ -54,8 +87,8 @@ function twitch_authentication(){
 function sendCUrlRequest(type, target, channelID, iter = 0){
 	let stream_url = "https://api.twitch.tv/helix/streams?user_login="+target;
 	Child_process.exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+stream_url+"'", function (error, stdout, stderr) {
-		var response = JSON.parse(stdout);
-	    if(response.hasOwnProperty('error')){
+		let response = JSON.parse(stdout);
+		if(response.hasOwnProperty('error')){
 	        console.log(stdout);
         }
 	    else{
@@ -112,11 +145,11 @@ function sendCUrlRequest(type, target, channelID, iter = 0){
 }
 
 function sendCUrlRequestAlways(type, target, channelID){
-	var url = null;
-	var typeFound = false;
+	let url = null;
+	let typeFound = false;
 	let stream_url = "https://api.twitch.tv/helix/streams?user_login="+target;
 	Child_process.exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+stream_url+"'", function (error, stdout, stderr) {
-		var response = JSON.parse(stdout);
+		let response = JSON.parse(stdout);
 		if(response.hasOwnProperty('error')){
 			console.log(stdout);
 		}
@@ -197,9 +230,7 @@ client.on('message', message => {
 	 
     // Test Commands
 	if (message.content === '!testStream') {
-		twitch_authentication();
-		sendCUrlRequest('getStreamInfo', 'geof2810', ChannelTestID);
-
+		twitch_authentication().then(stream_notification("geof2810"));
 	}
 
  
