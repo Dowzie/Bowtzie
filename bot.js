@@ -71,7 +71,7 @@ function twitch_authentication(){
 			grant_type: "client_credentials"
 		});
 
-		const req = https.request(options, res => {
+		const req = https.request(options, (res) => {
 			if(res.statusCode !== 200){
 				console.log('statusCode :'+res.statusCode)
 				reject()
@@ -82,8 +82,8 @@ function twitch_authentication(){
 				access_token = data_result["access_token"]
 				refresh_token = data_result["refresh_token"]
 				expires_token = data_result["expires_in"]
-				resolve("access_token_granted")
 				process.stdout.write(d)
+				resolve("access_token_granted")
 			})
 		});
 
@@ -109,7 +109,7 @@ function stream_notification(target){
 
 	const data = JSON.stringify({user_login: target})
 
-	const req = https.request(options, res => {
+	const req = https.request(options, (res) => {
 		if(res.statusCode !== 200){
 			console.log("statusCode :"+res.statusCode);
 		}
