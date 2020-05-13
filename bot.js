@@ -56,39 +56,42 @@ function twitch_validation(){
 }
 
 function twitch_authentication(){
-
-	const options = {
-		hostname: 'id.twitch.tv',
-		port: 443,
-		path: '/oauth2/token',
-		method: 'POST',
-		headers: {'Content-Type': 'application/json'}
-	}
-
-	const data = JSON.stringify({
-		client_id: process.env.CLIENT_ID,
-		client_secret: process.env.CLIENT_SECRET,
-		grant_type: "client_credentials"
-	});
-
-	const req = https.request(options, res => {
-		if(res.statusCode !== 200){
-			console.log('statusCode :'+res.statusCode)
+	return new Promise((resolve, reject) => {
+		const options = {
+			hostname: 'id.twitch.tv',
+			port: 443,
+			path: '/oauth2/token',
+			method: 'POST',
+			headers: {'Content-Type': 'application/json'}
 		}
 
-		res.on('data', d => {
-			let data_result = JSON.parse(d)
-			access_token = data_result["access_token"]
-			refresh_token = data_result["refresh_token"]
-			expires_token = data_result["expires_in"]
-			process.stdout.write(d)
-		})
-	});
+		const data = JSON.stringify({
+			client_id: process.env.CLIENT_ID,
+			client_secret: process.env.CLIENT_SECRET,
+			grant_type: "client_credentials"
+		});
 
-	req.on('error', error => {console.error(error)})
+		const req = https.request(options, res => {
+			if(res.statusCode !== 200){
+				console.log('statusCode :'+res.statusCode)
+				reject()
+			}
 
-	req.write(data);
-	req.end();
+			res.on('data', d => {
+				let data_result = JSON.parse(d)
+				access_token = data_result["access_token"]
+				refresh_token = data_result["refresh_token"]
+				expires_token = data_result["expires_in"]
+				resolve("access_token_granted")
+				process.stdout.write(d)
+			})
+		});
+
+		req.on('error', error => {console.error(error);reject()})
+
+		req.write(data);
+		req.end();
+	})
 }
 
 function stream_notification(target){
