@@ -17,7 +17,7 @@ const ChannelLiveID = "453256711935885314";
 const ChannelLigueID = "695943025855037440";
 const ChannelTestID = "614263675947188231";
 
-let ChannelOnLive = {"Chouchougeekart": 1, "Dovvzie": 1, "geof2810": 1,"liguecosplay": 1};
+let ChannelOnLive = {"Chouchougeekart": 1, "Dovvzie": 1, "geof2810": 1,"liguecosplay": 1, "lestream": 0};
 
 // Functions
 
@@ -102,7 +102,7 @@ function stream_notification(target, channelID){
 	const options = build_options("streams", target)
 	const req = https.request(options, (res) => {
 		if(res.statusCode !== 200){console.log("statusCode :"+res.statusCode);}
-		res.on('data', d => {
+		res.on('data', (d) => {
 			let response = JSON.parse(d)
 			console.log(response)
 			if(response.hasOwnProperty('error')){console.log(response)}
@@ -198,6 +198,7 @@ client.on('message', (message) => {
     // Test Commands
 	if (message.content === '!testStream') {
 		twitch_validation().then((message) => {
+			console.log(message)
 			if(message === "token_null" || message === "token_outdated") {
 				console.log("Token Authentication First")
 				twitch_authentication().then(() => {
