@@ -17,7 +17,7 @@ const ChannelLiveID = "453256711935885314";
 const ChannelLigueID = "695943025855037440";
 const ChannelTestID = "614263675947188231";
 
-let ChannelOnLive = {"Chouchougeekart": 1, "Dovvzie": 1, "geof2810": 1,"liguecosplay": 1, "lestream": 0};
+let ChannelOnLive = {"Chouchougeekart": 1, "Dovvzie": 1, "geof2810": 1,"liguecosplay": 1, "DeGuN": 0};
 
 // Functions
 
