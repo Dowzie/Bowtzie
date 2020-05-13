@@ -38,7 +38,7 @@ function build_options(type, target, game_id){
 		options["headers"]["Client-ID"] = process.env.CLIENT_ID
 		options["headers"]["authorization"] = "Bearer "+access_token
 		options["hostname"] = "api.twitch.tv"
-		if(type === "Stream"){options["path"] = "/helix/streams?user_login="+target}
+		if(type === "streams"){options["path"] = "/helix/streams?user_login="+target}
 		else{options["path"] =  '/helix/games?id='+game_id}
 	}
 	return options
