@@ -102,14 +102,11 @@ function stream_notification(target){
 		}
 	}
 
-	const data = JSON.stringify({user_login: target})
-
 	const req = https.request(options, (res) => {
-		if(res.statusCode !== 200){
-			console.log("statusCode :"+res.statusCode);
-		}
+		if(res.statusCode !== 200){console.log("statusCode :"+res.statusCode);}
 		res.on('data', d => {
-			console.log(d)
+			let response = JSON.parse(d)
+			console.log(response["data"])
 		})
 	})
 
@@ -264,23 +261,16 @@ client.on('message', message => {
     // Test Commands
 	if (message.content === '!testStream') {
 		twitch_validation().then((message) => {
-			if(message === "token_null"){
+			if(message === "token_null" || message === "token_outdated") {
 				console.log("Token Authentication First")
 				twitch_authentication().then(() => {
 					stream_notification("geof2810");
-					console.log("Token Access granted + Stream info")
 				})
-
-			}
-			else if(message === "token_outdated"){
-				console.log("outdated ...")
 			}
 			else if(message === "token_valid"){
 				stream_notification("geof2810");
 			}
 		})
-		//twitch_authentication()
-		//stream_notification("geof2810");
 	}
 
  
