@@ -98,7 +98,7 @@ function stream_notification(target){
 	const options = {
 		hostname: 'api.twitch.tv',
 		port: 443,
-		path: '/helix/streams',
+		path: '/helix/streams?user_login='+target,
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json',
@@ -118,7 +118,7 @@ function stream_notification(target){
 
 	req.on('error', error => {console.error(error)})
 
-	req.write(data);
+	req.write("");
 	req.end();
 }
 
