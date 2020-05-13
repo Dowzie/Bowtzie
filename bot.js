@@ -17,7 +17,7 @@ const ChannelLiveID = "453256711935885314";
 const ChannelLigueID = "695943025855037440";
 const ChannelTestID = "614263675947188231";
 
-let ChannelOnLive = {"Chouchougeekart": 1, "Dovvzie": 1, "geof2810": 1,"liguecosplay": 1, "DeGuN": 0};
+let ChannelOnLive = {"Chouchougeekart": 1, "Dovvzie": 1, "geof2810": 1,"liguecosplay": 1};
 
 // Functions
 
@@ -107,7 +107,7 @@ function stream_notification(target, channelID){
 			console.log(response)
 			if(response.hasOwnProperty('error')){console.log(response)}
 			else{
-				if(response["data"].length === 0){ChannelOnLive[target] = 0;}
+				if(response["data"].length === 0){ChannelOnLive[target] = 0;console.log(target+" not online ... 10 sec")}
 				else{
 					if(ChannelOnLive[target] === 0){
 						console.log(target+" just popped online !")
@@ -163,7 +163,7 @@ function stream_notification(target, channelID){
 client.on('ready', () => {
     console.log('I am ready!');
 
-    /*setInterval(function(){
+    setInterval(function(){
 		twitch_validation().then((message) => {
 			if(message === "token_null" || message === "token_outdated") {
 				console.log("Token Authentication First")
@@ -181,7 +181,7 @@ client.on('ready', () => {
 				stream_notification("liguecosplay", ChannelLigueID);
 			}
 		})
-	}, 10000)*/
+	}, 10000)
 });
 
 
