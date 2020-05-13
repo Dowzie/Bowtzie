@@ -21,7 +21,42 @@ let ChannelOnLive = {"Chouchougeekart": 1, "Dovvzie": 1, "geof2810": 1,"liguecos
 
 // Functions
 
+function twitch_validation(){
+	return new Promise((resolve, reject) => {
+		if(access_token === null){
+			resolve("token_null")
+		}
+		else {
+			const options = {
+				hostname: 'id.twitch.tv', port: 443,
+				path: '/oauth2/validate', method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': 'OAuth ' + access_token
+				}
+			}
+
+			const req = https.get(options, (res) => {
+				if (res.statusCode !== 200) {
+					console.log(res.statusCode)
+					reject("token_outdated")
+				}
+
+				res.on('data', (d) => {
+					process.stdout.write(d)
+					resolve("token_valid")
+				})
+			})
+
+			req.on('error', (e) => {
+				console.error(e)
+			})
+		}
+	})
+}
+
 function twitch_authentication(){
+
 	const options = {
 		hostname: 'id.twitch.tv',
 		port: 443,
@@ -230,42 +265,17 @@ client.on('message', message => {
 	 
     // Test Commands
 	if (message.content === '!testStream') {
-		let authenticate = new Promise((resolve, reject) => {
-
-			if(access_token === null){
-				resolve("token_null")
+		twitch_validation().then((message) => {
+			if(message === "token_null"){
+				twitch_authentication().then(() => {stream_notification("geof2810")})
 			}
-			else {
-				const options = {
-					hostname: 'id.twitch.tv',
-					port: 443,
-					path: '/oauth2/validate',
-					method: 'GET',
-					headers: {
-						'Content-Type': 'application/json',
-						'Authorization': 'OAuth ' + access_token
-					}
-				}
-
-				const req = https.get(options, (res) => {
-					if (res.statusCode !== 200) {
-						console.log(res.statusCode)
-						reject("Status code different than 200")
-					}
-
-					res.on('data', (d) => {
-						process.stdout.write(d)
-						resolve("")
-					})
-				})
-
-				req.on('error', (e) => {
-					console.error(e)
-				})
+			else if(message === "token_outdated"){
+				console.log("outdated ...")
+			}
+			else if(message === "token_valid"){
+				stream_notification("geof2810");
 			}
 		})
-
-		console.log(authenticate)
 		//twitch_authentication()
 		//stream_notification("geof2810");
 	}
