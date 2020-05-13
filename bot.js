@@ -231,34 +231,43 @@ client.on('message', message => {
     // Test Commands
 	if (message.content === '!testStream') {
 		let authenticate = new Promise((resolve, reject) => {
-			const options = {
-				hostname: 'id.twitch.tv',
-				port: 443,
-				path: '/oauth2/validate',
-				method: 'GET',
-				headers: {'Content-Type': 'application/json'}
-			}
 
-			const req = https.get(options, (res) => {
-				if(res.statusCode !== 200){
-					console.log(res.statusCode)
-					reject()
+			if(access_token === null){
+				resolve("token_null")
+			}
+			else {
+				const options = {
+					hostname: 'id.twitch.tv',
+					port: 443,
+					path: '/oauth2/validate',
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': 'OAuth ' + access_token
+					}
 				}
 
-				res.on('data', (d) => {
-					process.stdout.write(d)
-					resolve("200")
-				})
-			})
+				const req = https.get(options, (res) => {
+					if (res.statusCode !== 200) {
+						console.log(res.statusCode)
+						reject("Status code different than 200")
+					}
 
-			req.on('error', (e) =>{
-				console.error(e)
-			})
+					res.on('data', (d) => {
+						process.stdout.write(d)
+						resolve("")
+					})
+				})
+
+				req.on('error', (e) => {
+					console.error(e)
+				})
+			}
 		})
 
 		console.log(authenticate)
 		//twitch_authentication()
-		stream_notification("geof2810");
+		//stream_notification("geof2810");
 	}
 
  
