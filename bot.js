@@ -242,6 +242,7 @@ client.on('message', message => {
 			const req = https.get(options, (res) => {
 				if(res.statusCode !== 200){
 					console.log(res.statusCode)
+					reject()
 				}
 
 				res.on('data', (d) => {
@@ -250,7 +251,7 @@ client.on('message', message => {
 				})
 			})
 
-			res.on('error', (e) =>{
+			req.on('error', (e) =>{
 				console.error(e)
 			})
 		})
