@@ -85,6 +85,7 @@ function twitch_authentication(){
 				access_token = data_result["access_token"]
 				refresh_token = data_result["refresh_token"]
 				expires_token = data_result["expires_in"]
+				console.log("token_access granted")
 				resolve("access_token_granted")
 			})
 		});
@@ -103,6 +104,7 @@ function stream_notification(target, channelID){
 		if(res.statusCode !== 200){console.log("statusCode :"+res.statusCode);}
 		res.on('data', d => {
 			let response = JSON.parse(d)
+			console.log(response)
 			if(response.hasOwnProperty('error')){console.log(response)}
 			else{
 				if(response["data"].length === 0){ChannelOnLive[target] = 0;}
