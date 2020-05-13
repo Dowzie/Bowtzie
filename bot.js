@@ -104,7 +104,6 @@ function stream_notification(target, channelID){
 		if(res.statusCode !== 200){console.log("statusCode :"+res.statusCode);}
 		res.on('data', (d) => {
 			let response = JSON.parse(d)
-			console.log(response)
 			if(response.hasOwnProperty('error')){console.log(response)}
 			else{
 				if(response["data"].length === 0){ChannelOnLive[target] = 0;console.log(target+" not online ... 10 sec")}
@@ -162,11 +161,9 @@ function stream_notification(target, channelID){
 
 client.on('ready', () => {
     console.log('I am ready!');
-
     setInterval(function(){
 		twitch_validation().then((message) => {
 			if(message === "token_null" || message === "token_outdated") {
-				console.log("Token Authentication First")
 				twitch_authentication().then(() => {
 					stream_notification("geof2810", ChannelTestID);
 					stream_notification("Dovvzie", ChannelLiveID);
