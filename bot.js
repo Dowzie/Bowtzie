@@ -100,6 +100,7 @@ function twitch_authentication(){
 function stream_notification(target, channelID){
 	const channel = client.channels.cache.get(channelID)
 	const options = build_options("streams", target)
+	console.log(options)
 	const req = https.request(options, (res) => {
 		if(res.statusCode !== 200){console.log("statusCode :"+res.statusCode);}
 		res.on('data', (d) => {
@@ -202,11 +203,11 @@ client.on('message', (message) => {
 			if(message === "token_null" || message === "token_outdated") {
 				console.log("Token Authentication First")
 				twitch_authentication().then(() => {
-					stream_notification("lestream", ChannelTestID);
+					stream_notification("DeGuN", ChannelTestID);
 				})
 			}
 			else if(message === "token_valid"){
-				stream_notification("lestream", ChannelTestID);
+				stream_notification("DeGuN", ChannelTestID);
 			}
 		})
 	}
