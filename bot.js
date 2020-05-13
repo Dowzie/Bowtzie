@@ -230,7 +230,8 @@ client.on('message', message => {
 	 
     // Test Commands
 	if (message.content === '!testStream') {
-		twitch_authentication().then(stream_notification("geof2810"));
+		twitch_authentication()
+		stream_notification("geof2810");
 	}
 
  
