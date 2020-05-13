@@ -108,7 +108,9 @@ function stream_notification(target){
 		if(res.statusCode !== 200){
 			console.log("statusCode :"+res.statusCode);
 		}
-		res.on('data', d => {process.stdout.write(d)})
+		res.on('data', d => {
+			console.log(d)
+		})
 	})
 
 	req.on('error', error => {console.error(error)})
