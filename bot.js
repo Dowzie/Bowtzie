@@ -21,7 +21,7 @@ let ChannelOnLive = {"Chouchougeekart": 1, "Dovvzie": 1, "geof2810": 1,"liguecos
 
 // Functions
 
-function build_options(type, target=null, game_id=null){
+function build_options(type, target, game_id){
 	let options = {
 		hostname: "id.twitch.tv", port: 443, method: "GET",
 		headers:{'Content-Type': 'application/json'}
@@ -66,7 +66,7 @@ function twitch_validation(){
 
 function twitch_authentication(){
 	return new Promise((resolve, reject) => {
-		const options = build_options("authentication")
+		const options = build_options("authentication", undefined, undefined)
 
 		const data = JSON.stringify({
 			client_id: process.env.CLIENT_ID,
@@ -99,8 +99,7 @@ function twitch_authentication(){
 
 function stream_notification(target, channelID){
 	const channel = client.channels.cache.get(channelID)
-	const options = build_options("streams", target)
-	console.log(options)
+	const options = build_options("streams", target, undefined)
 	const req = https.request(options, (res) => {
 		if(res.statusCode !== 200){console.log("statusCode :"+res.statusCode);}
 		res.on('data', (d) => {
