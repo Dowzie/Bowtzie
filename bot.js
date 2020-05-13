@@ -2,8 +2,7 @@
 
 const Discord = require('discord.js');
 const https = require('https');
-var Child_process = require('child_process');
-const client = new Discord.Client({disableEveryone: false});
+const client = new Discord.Client();
 
 // Global Variables - State of Bot
 
@@ -14,12 +13,36 @@ let expires_token = null;
 
 // >> Discord Variables
 let lastGiveAway = null;
-let ChannelLiveID = "453256711935885314";
-let ChannelLigueID = "695943025855037440";
-let ChannelTestID = "614263675947188231";
+const ChannelLiveID = "453256711935885314";
+const ChannelLigueID = "695943025855037440";
+const ChannelTestID = "614263675947188231";
+
 let ChannelOnLive = {"Chouchougeekart": 1, "Dovvzie": 1, "geof2810": 1,"liguecosplay": 1};
 
 // Functions
+
+function build_options(type, target=null, game_id=null){
+	let options = {
+		hostname: "id.twitch.tv", port: 443, method: "GET",
+		headers:{'Content-Type': 'application/json'}
+	}
+	if(type === "validation"){
+		options['path']= '/oauth2/validate'
+		options["headers"]['Authorization'] = "OAuth " + access_token
+	}
+	else if(type === "authentication"){
+		options['path'] = '/oauth2/token'
+		options["method"] = "POST"
+	}
+	else if(type === "streams" || type === "games"){
+		options["headers"]["Client-ID"] = process.env.CLIENT_ID
+		options["headers"]["authorization"] = "Bearer "+access_token
+		options["hostname"] = "api.twitch.tv"
+		if(type === "Stream"){options["path"] = "/helix/streams?user_login="+target}
+		else{options["path"] =  '/helix/games?id='+game_id}
+	}
+	return options
+}
 
 function twitch_validation(){
 	return new Promise((resolve, reject) => {
@@ -27,25 +50,15 @@ function twitch_validation(){
 			resolve("token_null")
 		}
 		else {
-			const options = {
-				hostname: 'id.twitch.tv', port: 443,
-				path: '/oauth2/validate', method: 'GET',
-				headers: {
-					'Content-Type': 'application/json',
-					'Authorization': 'OAuth ' + access_token
-				}
-			}
-
+			const options = build_options("validation")
 			const req = https.get(options, (res) => {
 				if (res.statusCode !== 200) {
-					console.log(res.statusCode)
-					reject("token_outdated")
+					console.log("Token outdated : Code "+res.statusCode)
+					resolve("token_outdated")
 				}
-
 				res.on('data', (d) => {resolve("token_valid")})
 			})
-
-			req.on('error', (e) => {console.error(e)})
+			req.on('error', (e) => {console.error(e); reject()})
 			req.end()
 		}
 	})
@@ -53,13 +66,7 @@ function twitch_validation(){
 
 function twitch_authentication(){
 	return new Promise((resolve, reject) => {
-		const options = {
-			hostname: 'id.twitch.tv',
-			port: 443,
-			path: '/oauth2/token',
-			method: 'POST',
-			headers: {'Content-Type': 'application/json'}
-		}
+		const options = build_options("authentication")
 
 		const data = JSON.stringify({
 			client_id: process.env.CLIENT_ID,
@@ -89,24 +96,59 @@ function twitch_authentication(){
 	})
 }
 
-function stream_notification(target){
-	const options = {
-		hostname: 'api.twitch.tv',
-		port: 443,
-		path: '/helix/streams?user_login='+target,
-		method: 'GET',
-		headers: {
-			'Content-Type': 'application/json',
-			'Client-ID': process.env.CLIENT_ID,
-			'Authorization': 'Bearer ' + access_token
-		}
-	}
-
+function stream_notification(target, channelID){
+	const channel = client.channels.cache.get(channelID)
+	const options = build_options("streams", target)
 	const req = https.request(options, (res) => {
 		if(res.statusCode !== 200){console.log("statusCode :"+res.statusCode);}
 		res.on('data', d => {
 			let response = JSON.parse(d)
-			console.log(response["data"])
+			if(response.hasOwnProperty('error')){console.log(response)}
+			else{
+				if(response["data"].length === 0){ChannelOnLive[target] = 0;}
+				else{
+					if(ChannelOnLive[target] === 0){
+						console.log(target+" just popped online !")
+						let userStreaming = response["data"][0]
+						let message = userStreaming["user_name"] + " est en live ! @everyone \nhttps://twitch.tv/"
+							+ userStreaming["user_name"];
+						let thumbnail = userStreaming["thumbnail_url"]
+							.replace(/{width}/, "356")
+							.replace(/{height}/, "200");
+						let emb = new Discord.MessageEmbed()
+							.setTitle(userStreaming["user_name"]+" est en LIVE !")
+							.setDescription(userStreaming["title"])
+							.setColor(0x02d414)
+							.setImage(thumbnail)
+							.setTimestamp(userStreaming["timestamp"])
+							.setFooter("twitch.tv/"+userStreaming["user_name"]);
+
+						if(userStreaming["game_id"]){
+							const options2 = build_options("games", undefined, userStreaming["game_id"])
+
+							const req2 = https.request(options2, (res2) => {
+								if(res2.statusCode !== 200){console.log("StatusCode :"+res2.statusCode)}
+
+								res2.on('data', (d2) => {
+									let game_info = JSON.parse(d2)
+									let game_played = game_info["data"][0]["box_art_url"]
+										.replace(/{width}/, "60")
+										.replace(/{height}/, "80")
+									emb.setThumbnail(game_played)
+										.addField('En live sur', game_info["data"][0]["name"], true)
+									console.log("Twitch stream detected");
+								})
+							})
+							req2.on('error', (error) => {console.log(error)})
+							req2.end()
+						}
+						else{
+							console.log("Twitch stream without category detected");
+						}
+						channel.send(message,{"embed": emb});
+					}
+				}
+			}
 		})
 	})
 
@@ -114,141 +156,34 @@ function stream_notification(target){
 	req.end();
 }
 
-function sendCUrlRequest(type, target, channelID, iter = 0){
-	let stream_url = "https://api.twitch.tv/helix/streams?user_login="+target;
-	Child_process.exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+stream_url+"'", function (error, stdout, stderr) {
-		let response = JSON.parse(stdout);
-		if(response.hasOwnProperty('error')){
-	        console.log(stdout);
-        }
-	    else{
-			if(stdout === '{"data":[],"pagination":{}}'){
-				if(iter <= 120){
-					console.log("Streaming of "+ target + " unreachable... Retry in 10 seconds ...");
-					setTimeout(function(){sendCUrlRequest(type, target, channelID, iter + 1);}, 10000);
-				}
-			}
-			else{
-				console.log(stdout);
-				let StreamInfo = JSON.parse(stdout);
-				let userStreaming = StreamInfo["data"][0]
-				let channelLive = client.channels.get(channelID);
-				let message = userStreaming["user_name"]+" est en live ! @everyone \nhttps://twitch.tv/"+userStreaming["user_name"];
-				if(userStreaming["game_id"]){
-					let game_url = "https://api.twitch.tv/helix/games?id="+userStreaming["game_id"];
-					Child_process.exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+game_url+"'", function (error, stdout, stderr) {
-						let game_info = JSON.parse(stdout);
-						let thumbnail = userStreaming["thumbnail_url"].replace(/{width}/, "356");
-						thumbnail = thumbnail.replace(/{height}/, "200");
-						let game_played = game_info["data"][0]["box_art_url"].replace(/{width}/, "60");
-						game_played = game_played.replace(/{height}/, "80");
-						let embeddedInfo = new Discord.RichEmbed()
-							.setTitle(userStreaming["user_name"]+" est en LIVE !")
-							.setDescription(userStreaming["title"])
-							.setThumbnail(game_played)
-							.setColor(0x02d414)
-							.addField('En live sur', game_info["data"][0]["name"], true)
-							.setImage(thumbnail)
-							.setTimestamp(userStreaming["timestamp"])
-							.setFooter("twitch.tv/"+userStreaming["user_name"]);
-						channelLive.send(message,{"embed": embeddedInfo});
-						console.log("Twitch stream detected");
-					});
-				}
-				else{
-					let thumbnail = userStreaming["thumbnail_url"].replace(/{width}/, "356");
-					thumbnail = thumbnail.replace(/{height}/, "200");
-					let embeddedInfo = new Discord.RichEmbed()
-						.setTitle(userStreaming["user_name"]+" est en LIVE !")
-						.setDescription(userStreaming["title"])
-						.setImage(thumbnail)
-						.setColor(0x02d414)
-						.setTimestamp(userStreaming["timestamp"])
-						.setFooter("twitch.tv/"+userStreaming["user_name"]);
-					channelLive.send(message,{"embed": embeddedInfo});
-					console.log("Twitch stream without category detected");
-				}
-			}
-		}
-
-	});
-}
-
-function sendCUrlRequestAlways(type, target, channelID){
-	let url = null;
-	let typeFound = false;
-	let stream_url = "https://api.twitch.tv/helix/streams?user_login="+target;
-	Child_process.exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+stream_url+"'", function (error, stdout, stderr) {
-		let response = JSON.parse(stdout);
-		if(response.hasOwnProperty('error')){
-			console.log(stdout);
-		}
-		else{
-			if(stdout === '{"data":[],"pagination":{}}'){
-				console.log("Streaming of "+ target + " unreachable... Retry in 10 seconds ...");
-				ChannelOnLive[target] = 0;
-			}
-			else{
-				if(ChannelOnLive[target] == 0){
-					console.log(stdout);
-					ChannelOnLive[target] = 1;
-					let StreamInfo = JSON.parse(stdout);
-					let userStreaming = StreamInfo["data"][0]
-					let channelLive = client.channels.get(channelID);
-					let message = userStreaming["user_name"]+" est en live ! @everyone \nhttps://twitch.tv/"+userStreaming["user_name"];
-					if(userStreaming["game_id"]){
-						let game_url = "https://api.twitch.tv/helix/games?id="+userStreaming["game_id"];
-						Child_process.exec("curl -H 'Client-ID: njy5v2njcv4492dsi7xtr80myninob' -X GET '"+game_url+"'", function (error, stdout, stderr) {
-							let game_info = JSON.parse(stdout);
-							let thumbnail = userStreaming["thumbnail_url"].replace(/{width}/, "356");
-							thumbnail = thumbnail.replace(/{height}/, "200");
-							let game_played = game_info["data"][0]["box_art_url"].replace(/{width}/, "60");
-							game_played = game_played.replace(/{height}/, "80");
-							let embeddedInfo = new Discord.RichEmbed()
-								.setTitle(userStreaming["user_name"]+" est en LIVE !")
-								.setDescription(userStreaming["title"])
-								.setThumbnail(game_played)
-								.setColor(0x02d414)
-								.addField('En live sur', game_info["data"][0]["name"], true)
-								.setImage(thumbnail)
-								.setTimestamp(userStreaming["timestamp"])
-								.setFooter("twitch.tv/"+userStreaming["user_name"]);
-							channelLive.send(message,{"embed": embeddedInfo});
-							console.log("Twitch stream detected");
-						});
-					}
-					else{
-						let thumbnail = userStreaming["thumbnail_url"].replace(/{width}/, "356");
-						thumbnail = thumbnail.replace(/{height}/, "200");
-						let embeddedInfo = new Discord.RichEmbed()
-							.setTitle(userStreaming["user_name"]+" est en LIVE !")
-							.setDescription(userStreaming["title"])
-							.setImage(thumbnail)
-							.setColor(0x02d414)
-							.setTimestamp(userStreaming["timestamp"])
-							.setFooter("twitch.tv/"+userStreaming["user_name"]);
-						channelLive.send(message,{"embed": embeddedInfo});
-						console.log("Twitch stream without category detected");
-					}
-				}
-			}
-		}
-
-	});
-}
-
 // Event Manager
 
 client.on('ready', () => {
     console.log('I am ready!');
-	//setInterval(function(){sendCUrlRequestAlways('getStreamInfo', 'geof2810', ChannelTestID);}, 10000);
-	//setInterval(function(){sendCUrlRequestAlways('getStreamInfo', 'Dovvzie', ChannelLiveID);}, 10000);
-	//setInterval(function(){sendCUrlRequestAlways('getStreamInfo', 'Chouchougeekart', ChannelLiveID);}, 10000);
-	//setInterval(function(){sendCUrlRequestAlways('getStreamInfo', 'liguecosplay', ChannelLigueID);}, 10000);
+
+    /*setInterval(function(){
+		twitch_validation().then((message) => {
+			if(message === "token_null" || message === "token_outdated") {
+				console.log("Token Authentication First")
+				twitch_authentication().then(() => {
+					stream_notification("geof2810", ChannelTestID);
+					stream_notification("Dovvzie", ChannelLiveID);
+					stream_notification("Chouchougeekart", ChannelLiveID);
+					stream_notification("liguecosplay", ChannelLigueID);
+				})
+			}
+			else if(message === "token_valid"){
+				stream_notification("geof2810", ChannelTestID);
+				stream_notification("Dovvzie", ChannelLiveID);
+				stream_notification("Chouchougeekart", ChannelLiveID);
+				stream_notification("liguecosplay", ChannelLigueID);
+			}
+		})
+	}, 10000)*/
 });
 
 
-client.on('message', message => {
+client.on('message', (message) => {
  if(!(message.author.bot)){
 
 	let d = new Date();
@@ -264,11 +199,11 @@ client.on('message', message => {
 			if(message === "token_null" || message === "token_outdated") {
 				console.log("Token Authentication First")
 				twitch_authentication().then(() => {
-					stream_notification("geof2810");
+					stream_notification("lestream", ChannelTestID);
 				})
 			}
 			else if(message === "token_valid"){
-				stream_notification("geof2810");
+				stream_notification("lestream", ChannelTestID);
 			}
 		})
 	}
