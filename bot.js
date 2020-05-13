@@ -42,16 +42,10 @@ function twitch_validation(){
 					reject("token_outdated")
 				}
 
-				res.on('data', (d) => {
-					process.stdout.write(d)
-					resolve("token_valid")
-				})
+				res.on('data', (d) => {resolve("token_valid")})
 			})
 
-			req.on('error', (e) => {
-				console.error(e)
-			})
-
+			req.on('error', (e) => {console.error(e)})
 			req.end()
 		}
 	})
@@ -84,7 +78,6 @@ function twitch_authentication(){
 				access_token = data_result["access_token"]
 				refresh_token = data_result["refresh_token"]
 				expires_token = data_result["expires_in"]
-				process.stdout.write(d)
 				resolve("access_token_granted")
 			})
 		});
@@ -270,7 +263,12 @@ client.on('message', message => {
 	if (message.content === '!testStream') {
 		twitch_validation().then((message) => {
 			if(message === "token_null"){
-				twitch_authentication().then(() => {stream_notification("geof2810")})
+				console.log("Token Authentication First")
+				twitch_authentication().then(() => {
+					stream_notification("geof2810");
+					console.log("Token Access granted + Stream info")
+				})
+
 			}
 			else if(message === "token_outdated"){
 				console.log("outdated ...")
