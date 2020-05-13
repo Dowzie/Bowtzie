@@ -51,6 +51,8 @@ function twitch_validation(){
 			req.on('error', (e) => {
 				console.error(e)
 			})
+
+			req.end()
 		}
 	})
 }
@@ -117,8 +119,6 @@ function stream_notification(target){
 	})
 
 	req.on('error', error => {console.error(error)})
-
-	req.write("");
 	req.end();
 }
 
