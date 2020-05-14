@@ -214,11 +214,11 @@ client.on('message', (message) => {
 	}
 
 	// Admin Commands
-    if (message.content === '!mutebot' && message.author.id in botAdmin){
+    if (message.content === '!mutebot' && botAdmin.includes(message.author.id)){
         botMuted = true
         message.reply('Ben si c\'est comme ca , moi je me casse !')
     }
-    if (message.content === '!unmutebot' && message.author.id in botAdmin){
+    if (message.content === '!unmutebot' && botAdmin.includes(message.author.id)){
         botMuted = false
         message.reply('Allo ?? Allooo ? Ah je suis de retour !')
     }
