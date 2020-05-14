@@ -221,10 +221,18 @@ client.on('message', (message) => {
 	}
 
 	// Admin Commands
-    if (message.content === '!mutebot' && botAdmin.includes(message.author.id)){
-        console.log(message.author.id)
-        botMuted = true
-        message.reply('Ben si c\'est comme ca , moi je me casse !')
+    if (message.content === '!mutebot'){
+        if (botAdmin.includes(message.author.id)){
+            console.log(message.author.id)
+            botMuted = true
+            message.reply('Ben si c\'est comme ca , moi je me casse !')
+        }
+        else{
+            console.log(message.author.id)
+            console.log(botAdmin.includes(message.author.id))
+            console.log(botAdmin)
+        }
+
     }
 
  
