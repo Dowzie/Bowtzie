@@ -13,6 +13,8 @@ let expires_token = null;
 
 // >> Discord Variables
 let lastGiveAway = null;
+let botMuted = false;
+let botAdmin = [194524212134674432, 253491625328771073, 283740549448597505]
 const ChannelLiveID = "453256711935885314";
 const ChannelLigueID = "695943025855037440";
 const ChannelTestID = "614263675947188231";
@@ -163,28 +165,30 @@ function stream_notification(target, channelID){
 client.on('ready', () => {
     console.log('I am ready!');
     setInterval(function(){
-		twitch_validation().then((message) => {
-			if(message === "token_null" || message === "token_outdated") {
-				twitch_authentication().then(() => {
-					stream_notification("geof2810", ChannelTestID);
-					/*stream_notification("Dovvzie", ChannelLiveID);
-					stream_notification("Chouchougeekart", ChannelLiveID);
-					stream_notification("liguecosplay", ChannelLigueID);*/
-				})
-			}
-			else if(message === "token_valid"){
-				stream_notification("geof2810", ChannelTestID);
-				/*stream_notification("Dovvzie", ChannelLiveID);
-				stream_notification("Chouchougeekart", ChannelLiveID);
-				stream_notification("liguecosplay", ChannelLigueID);*/
-			}
-		})
+        if(botMuted === false){
+            twitch_validation().then((message) => {
+                if(message === "token_null" || message === "token_outdated") {
+                    twitch_authentication().then(() => {
+                        stream_notification("geof2810", ChannelTestID);
+                        /*stream_notification("Dovvzie", ChannelLiveID);
+                        stream_notification("Chouchougeekart", ChannelLiveID);
+                        stream_notification("liguecosplay", ChannelLigueID);*/
+                    })
+                }
+                else if(message === "token_valid"){
+                    stream_notification("geof2810", ChannelTestID);
+                    /*stream_notification("Dovvzie", ChannelLiveID);
+                    stream_notification("Chouchougeekart", ChannelLiveID);
+                    stream_notification("liguecosplay", ChannelLigueID);*/
+                }
+            })
+        }
 	}, 10000)
 });
 
 
 client.on('message', (message) => {
- if(!(message.author.bot)){
+ if(!(message.author.bot) && botMuted === false){
 
 	let d = new Date();
 	let currTimeStamp = d.getTime();
@@ -200,20 +204,25 @@ client.on('message', (message) => {
 			if(message === "token_null" || message === "token_outdated") {
 				console.log("Token Authentication First")
 				twitch_authentication().then(() => {
-					stream_notification("DeGuN", ChannelTestID);
+					stream_notification("geof2810", ChannelTestID);
 				})
 			}
 			else if(message === "token_valid"){
-				stream_notification("DeGuN", ChannelTestID);
+				stream_notification("geof2810", ChannelTestID);
 			}
 		})
 	}
 
+	// Admin Commands
+    if (message.content === '!mutebot' && message.author.id in botAdmin){
+
+    }
+    if (message.content === '!unmutebot' && message.author.id in botAdmin){
+
+    }
  
-    // Fun Commands
-    /*if (message.content === '!ping') {
-       message.reply('pong');
-    }*/
+    // >>> Fun Commands
+
     /*if (message.content.toLowerCase().includes('dovvzie', 0)){
         message.channel.send('<@194524212134674432> c\'est un gros caca !');
         message.channel.send('<@253491625328771073> AUSSI !');
@@ -235,8 +244,19 @@ client.on('message', (message) => {
 		message.channel.send('Comment ?! J\'ai entendu giveaway ? je préviens tout de suite <@253491625328771073> !');
 		lastGiveAway = d.getTime();
     }
+
+     if (message.content === "!hipster"){
+         message.channel.send("On m'a appelé ?");
+         message.channel.send({files: ['./loreal.gif']});
+     }
+
+     if (message.content === "!hipsterdab"){
+         message.channel.send({files: ['./hipsterdabv2.gif']});
+     }
+
+
  
-    // Info Commands
+    // >>> Info Commands
  
     if (message.content === '!tipeee'){
        message.reply('Go me support sur Tipeee si tu aime mon job, plein de trucs cool en contrepartie :wink: \nhttps://fr.tipeee.com/dowzie');
@@ -249,15 +269,7 @@ client.on('message', (message) => {
        message.reply('Go follow pour ne rien rater ! \n:pushpin:  Facebook : <https://www.facebook.com/DowzieCosplay> \n \
 :pushpin:  Twitter : <https://twitter.com/dovvzie> \n:pushpin:  Instagram : <https://www.instagram.com/dovvzie> \n:pushpin:  Twitch : <https://www.twitch.tv/dovvzie> \n:pushpin:  Tipeee : <https://fr.tipeee.com/dowzie>');
     }
-	 
-	if (message.content === "!hipster"){
-		message.channel.send("On m'a appelé ?");
-		message.channel.send({files: ['./loreal.gif']});
-	}
-	
-	if (message.content === "!hipsterdab"){
-		message.channel.send({files: ['./hipsterdabv2.gif']});
-	}
+
  }
 });
 
