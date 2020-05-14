@@ -109,6 +109,7 @@ function stream_notification(target, channelID){
 				if(response["data"].length === 0){ChannelOnLive[target] = 0;console.log(target+" not online ... 10 sec")}
 				else{
 					if(ChannelOnLive[target] === 0){
+					    ChannelOnLive[target] = 1
 						console.log(target+" just popped online !")
 						let userStreaming = response["data"][0]
 						let message = userStreaming["user_name"] + " est en live ! @everyone \nhttps://twitch.tv/"
@@ -165,15 +166,15 @@ client.on('ready', () => {
 		twitch_validation().then((message) => {
 			if(message === "token_null" || message === "token_outdated") {
 				twitch_authentication().then(() => {
-					/*stream_notification("geof2810", ChannelTestID);
-					stream_notification("Dovvzie", ChannelLiveID);
+					stream_notification("geof2810", ChannelTestID);
+					/*stream_notification("Dovvzie", ChannelLiveID);
 					stream_notification("Chouchougeekart", ChannelLiveID);
 					stream_notification("liguecosplay", ChannelLigueID);*/
 				})
 			}
 			else if(message === "token_valid"){
-				/*stream_notification("geof2810", ChannelTestID);
-				stream_notification("Dovvzie", ChannelLiveID);
+				stream_notification("geof2810", ChannelTestID);
+				/*stream_notification("Dovvzie", ChannelLiveID);
 				stream_notification("Chouchougeekart", ChannelLiveID);
 				stream_notification("liguecosplay", ChannelLigueID);*/
 			}
