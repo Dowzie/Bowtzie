@@ -188,6 +188,13 @@ client.on('ready', () => {
 
 
 client.on('message', (message) => {
+    if(!(message.author.bot) && botMuted === true){
+        if (message.content === '!unmutebot' && botAdmin.includes(message.author.id)){
+            botMuted = false
+            message.reply('Allo ?? Allooo ? Ah je suis de retour !')
+        }
+    }
+
  if(!(message.author.bot) && botMuted === false){
 
 	let d = new Date();
@@ -214,15 +221,12 @@ client.on('message', (message) => {
 	}
 
 	// Admin Commands
-    if (message.content === '!mutebot'){
+    if (message.content === '!mutebot' && botAdmin.includes(message.author.id)){
         console.log(message.author.id)
         botMuted = true
         message.reply('Ben si c\'est comme ca , moi je me casse !')
     }
-    if (message.content === '!unmutebot'){
-        botMuted = false
-        message.reply('Allo ?? Allooo ? Ah je suis de retour !')
-    }
+
  
     // >>> Fun Commands
 
