@@ -205,7 +205,7 @@ client.on('message', (message) => {
     }
 	 
     // Test Commands
-	if (message.content === '!testStream') {
+	if (message.content === '!testStream' && botAdmin.includes(message.author.id.toString())) {
 		twitch_validation().then((message) => {
 			console.log(message)
 			if(message === "token_null" || message === "token_outdated") {
