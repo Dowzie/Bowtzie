@@ -165,17 +165,17 @@ client.on('ready', () => {
 		twitch_validation().then((message) => {
 			if(message === "token_null" || message === "token_outdated") {
 				twitch_authentication().then(() => {
-					stream_notification("geof2810", ChannelTestID);
+					/*stream_notification("geof2810", ChannelTestID);
 					stream_notification("Dovvzie", ChannelLiveID);
 					stream_notification("Chouchougeekart", ChannelLiveID);
-					stream_notification("liguecosplay", ChannelLigueID);
+					stream_notification("liguecosplay", ChannelLigueID);*/
 				})
 			}
 			else if(message === "token_valid"){
-				stream_notification("geof2810", ChannelTestID);
+				/*stream_notification("geof2810", ChannelTestID);
 				stream_notification("Dovvzie", ChannelLiveID);
 				stream_notification("Chouchougeekart", ChannelLiveID);
-				stream_notification("liguecosplay", ChannelLigueID);
+				stream_notification("liguecosplay", ChannelLigueID);*/
 			}
 		})
 	}, 10000)
