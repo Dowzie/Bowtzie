@@ -14,7 +14,7 @@ let expires_token = null;
 // >> Discord Variables
 let lastGiveAway = null;
 let botMuted = false;
-let botAdmin = [194524212134674432, 253491625328771073, 283740549448597505]
+const botAdmin = [194524212134674432, 253491625328771073, 283740549448597505]
 const ChannelLiveID = "453256711935885314";
 const ChannelLigueID = "695943025855037440";
 const ChannelTestID = "614263675947188231";
@@ -214,11 +214,12 @@ client.on('message', (message) => {
 	}
 
 	// Admin Commands
-    if (message.content === '!mutebot' && botAdmin.includes(message.author.id)){
+    if (message.content === '!mutebot'){
+        console.log(message.author.id)
         botMuted = true
         message.reply('Ben si c\'est comme ca , moi je me casse !')
     }
-    if (message.content === '!unmutebot' && botAdmin.includes(message.author.id)){
+    if (message.content === '!unmutebot'){
         botMuted = false
         message.reply('Allo ?? Allooo ? Ah je suis de retour !')
     }
