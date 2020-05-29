@@ -1,4 +1,4 @@
-// Global Variables 
+// Global Variables & Imports
 
 const Discord = require('discord.js');
 const https = require('https');
@@ -13,20 +13,23 @@ let expires_token = null;
 
 // >> Discord Variables
 let lastGiveAway = null;
+let lastClipTime = new Date();
 let botMuted = false;
 const botAdmin = ["194524212134674432", "253491625328771073", "283740549448597505"]
 const ChannelLiveID = "453256711935885314";
 const ChannelLigueID = "695943025855037440";
 const ChannelTestID = "614263675947188231";
+const ChannelGeofTestID = "618874167810326561";
 
-let ChannelOnLive = {"Chouchougeekart": 1, "Dovvzie": 1, "geof2810": 1,"liguecosplay": 1};
+let ChannelOnLive = {"chouchougeekart": 1, "dovvzie": 1, "geof2810": 1,"liguecosplay": 1};
+let streamersOnLigue = ["dowzie", "osanguine", "shinosan", "chouchou", "tsukiyo", "celkae", "mathoz"]
 
-// Functions
+// >> Functions
 
-function build_options(type, target, game_id){
+function build_options(type, target, game_id, pagination = null){
 	let options = {
 		hostname: "id.twitch.tv", port: 443, method: "GET",
-		headers:{'Content-Type': 'application/json'}
+		headers:{'Content-Type': 'application/json', 'Cache-Control': 'no-store'}
 	}
 	if(type === "validation"){
 		options['path']= '/oauth2/validate'
@@ -36,12 +39,25 @@ function build_options(type, target, game_id){
 		options['path'] = '/oauth2/token'
 		options["method"] = "POST"
 	}
-	else if(type === "streams" || type === "games"){
+	else if(type === "streams" || type === "games" || type === "clips" || type === "users"){
 		options["headers"]["Client-ID"] = process.env.CLIENT_ID
 		options["headers"]["authorization"] = "Bearer "+access_token
 		options["hostname"] = "api.twitch.tv"
-		if(type === "streams"){options["path"] = "/helix/streams?user_login="+target}
-		else{options["path"] =  '/helix/games?id='+game_id}
+		if(type === "streams"){
+			options["path"] = "/helix/streams?user_login="+target
+		}
+		else if(type === "users"){
+			options["path"] = "/helix/users?login="+target
+		}
+		else if(type === "clips"){
+			options["path"] = "/helix/clips?broadcaster_id="+target+"&first=100"//&started_at="+lastClipTime.toISOString()
+			if(pagination !== null){
+				options["path"] += "&after="+pagination
+			}
+		}
+		else{
+			options["path"] =  '/helix/games?id='+game_id
+		}
 	}
 	return options
 }
@@ -55,7 +71,7 @@ function twitch_validation(){
 			const options = build_options("validation")
 			const req = https.get(options, (res) => {
 				if (res.statusCode !== 200) {
-					console.log("Token outdated : Code "+res.statusCode)
+					console.log("Token outdated : Code "+res.statusCode);
 					resolve("token_outdated")
 				}
 				res.on('data', (d) => {resolve("token_valid")})
@@ -70,25 +86,18 @@ function twitch_authentication(){
 	return new Promise((resolve, reject) => {
 		const options = build_options("authentication", undefined, undefined)
 
-		const data = JSON.stringify({
-			client_id: process.env.CLIENT_ID,
-			client_secret: process.env.CLIENT_SECRET,
-			grant_type: "client_credentials"
-		});
+		const data = JSON.stringify({client_id: process.env.CLIENT_ID, client_secret: process.env.CLIENT_SECRET,
+			grant_type: "client_credentials"});
 
 		const req = https.request(options, (res) => {
-			if(res.statusCode !== 200){
-				console.log('statusCode :'+res.statusCode)
-				reject()
-			}
+			if(res.statusCode !== 200){console.log('statusCode :'+res.statusCode);reject();}
 
 			res.on('data', d => {
-				let data_result = JSON.parse(d)
-				access_token = data_result["access_token"]
-				refresh_token = data_result["refresh_token"]
-				expires_token = data_result["expires_in"]
-				console.log("token_access granted")
-				resolve("access_token_granted")
+				let data_result = JSON.parse(d);
+				access_token = data_result["access_token"];refresh_token = data_result["refresh_token"];
+				expires_token = data_result["expires_in"];
+				console.log("token_access granted");
+				resolve("access_token_granted");
 			})
 		});
 
@@ -99,55 +108,65 @@ function twitch_authentication(){
 	})
 }
 
+function get_announce_title(target){
+	let target_nice = target
+	if(target === "liguecosplay"){
+		target_nice = "La Ligue Des Cosplayeurs Extraordinaires";
+	}
+	return "**"+ target_nice + " est en live !** @everyone \nhttps://twitch.tv/" + target;
+}
+
+function get_announce_embed(target, title, image_url, timestamp){
+	let prefix_url = "https://raw.githubusercontent.com/Dowzie/Bowtzie/master/streaming_announce/";
+	let image = image_url.replace(/{width}/, "356").replace(/{height}/, "200");
+	if(target === 'liguecosplay'){
+		image = prefix_url + "generic_announce.png";
+		for(let i = 0; i < streamersOnLigue.length; i++){
+			if(title.toLowerCase().includes(streamersOnLigue[i].toLowerCase(), 0)){
+				image = prefix_url + streamersOnLigue[i].toLowerCase()+"_announce.png";
+			}
+		}
+	}
+	if(target === 'geof2810'){
+		image = prefix_url + "geof2810_announce.png";
+	}
+	return new Discord.MessageEmbed().setTitle(title).setColor(0x02d414).setImage(image).setTimestamp(timestamp)
+		.setFooter("twitch.tv/"+target).setURL("https://twitch.tv/"+target);
+}
+
 function stream_notification(target, channelID){
 	const channel = client.channels.cache.get(channelID)
 	const options = build_options("streams", target, undefined)
 	const req = https.request(options, (res) => {
-		if(res.statusCode !== 200){console.log("statusCode :"+res.statusCode);}
 		res.on('data', (d) => {
 			let response = JSON.parse(d)
 			if(response.hasOwnProperty('error')){console.log(response)}
 			else{
-				if(response["data"].length === 0){ChannelOnLive[target] = 0;console.log(target+" not online ... 10 sec")}
+				if(response["data"].length === 0){
+					ChannelOnLive[target] = 0;
+					console.log(target+" not online ... 10 sec");
+				}
 				else{
 					if(ChannelOnLive[target] === 0){
 					    ChannelOnLive[target] = 1
-						console.log(target+" just popped online !")
 						let userStreaming = response["data"][0]
-						let message = userStreaming["user_name"] + " est en live ! @everyone \nhttps://twitch.tv/"
-							+ userStreaming["user_name"];
-						let thumbnail = userStreaming["thumbnail_url"]
-							.replace(/{width}/, "356")
-							.replace(/{height}/, "200");
-						let emb = new Discord.MessageEmbed()
-							.setTitle(userStreaming["user_name"]+" est en LIVE !")
-							.setDescription(userStreaming["title"])
-							.setColor(0x02d414)
-							.setImage(thumbnail)
-							.setTimestamp(userStreaming["timestamp"])
-							.setFooter("twitch.tv/"+userStreaming["user_name"]);
+						let message = get_announce_title(userStreaming["user_name"]);
+						let emb = get_announce_embed(userStreaming["user_name"], userStreaming["title"],
+							userStreaming["thumbnail_url"], userStreaming["timestamp"]);
 
 						if(userStreaming["game_id"]){
 							const options2 = build_options("games", undefined, userStreaming["game_id"])
-
 							const req2 = https.request(options2, (res2) => {
-								if(res2.statusCode !== 200){console.log("StatusCode :"+res2.statusCode)}
-
 								res2.on('data', (d2) => {
 									let game_info = JSON.parse(d2)
 									let game_played = game_info["data"][0]["box_art_url"]
-										.replace(/{width}/, "60")
-										.replace(/{height}/, "80")
+										.replace(/{width}/, "60").replace(/{height}/, "80")
 									emb.setThumbnail(game_played)
 										.addField('En live sur', game_info["data"][0]["name"], true)
-									console.log("Twitch stream detected");
 								})
 							})
 							req2.on('error', (error) => {console.log(error)})
 							req2.end()
-						}
-						else{
-							console.log("Twitch stream without category detected");
 						}
 						channel.send(message,{"embed": emb});
 					}
@@ -160,6 +179,69 @@ function stream_notification(target, channelID){
 	req.end();
 }
 
+function clips_notification(target, channelID){
+	const channel = client.channels.cache.get(channelID);
+	const options = build_options("users", target, undefined);
+
+	const reqID = https.request(options, (res) => {
+		let result_buffer = ""
+		res.on("data", (d) => {result_buffer += d;})
+		res.on("end", async () => {
+			let result = JSON.parse(result_buffer)
+			let result_id = result["data"][0]["id"];
+
+			let pagination = null;
+			let clips_results = null;
+			while(pagination === null || Object.keys(pagination).length !== 0){
+				if(pagination === null){
+					await get_clips_list(result_id).then((message) => {clips_results = message})
+				}
+				else{
+					await get_clips_list(result_id, pagination["cursor"]).then((message) => {clips_results = message})
+				}
+
+				for(let i = 0; i < clips_results["data"].length; i++){
+					let url = clips_results["data"][i]["url"]
+					let creation_date = clips_results["data"][i]["created_at"]
+
+					let creation_date_object = new Date(creation_date)
+					console.log(creation_date_object)
+					console.log(lastClipTime)
+					console.log(url)
+					if(lastClipTime.getUTCMilliseconds() < creation_date_object.getUTCMilliseconds()){
+						channel.send(url)
+						lastClipTime = creation_date_object
+					}
+				}
+
+				pagination = clips_results["pagination"]
+				console.log(pagination)
+			}
+		})
+	})
+
+	reqID.on('error', error => {console.error(error)})
+	reqID.end();
+}
+
+function get_clips_list(twitch_id, pagination=null){
+
+	return new Promise((resolve, reject) => {
+		let clips_buffer = ""
+		const options2 = build_options("clips", twitch_id, undefined, pagination);
+		console.log(options2)
+		const req = https.request(options2, (res2) => {
+			res2.on("data", (d) => {clips_buffer += d;});
+			res2.on("end", () => {
+				console.log(clips_buffer)
+				resolve(JSON.parse(clips_buffer))
+			})
+		})
+		req.on('error', error => {console.error(error); reject()})
+		req.end()
+	})
+}
+
 // Event Manager
 
 client.on('ready', () => {
@@ -169,21 +251,23 @@ client.on('ready', () => {
             twitch_validation().then((message) => {
                 if(message === "token_null" || message === "token_outdated") {
                     twitch_authentication().then(() => {
-                        stream_notification("geof2810", ChannelTestID);
-                        stream_notification("Dovvzie", ChannelLiveID);
-                        stream_notification("Chouchougeekart", ChannelLiveID);
+                        stream_notification("geof2810", ChannelGeofTestID);
+                        //clips_notification("geof2810", ChannelGeofTestID);
+                        stream_notification("dovvzie", ChannelLiveID);
+                        stream_notification("chouchougeekart", ChannelLiveID);
                         stream_notification("liguecosplay", ChannelLigueID);
                     })
                 }
                 else if(message === "token_valid"){
-                    stream_notification("geof2810", ChannelTestID);
-                    stream_notification("Dovvzie", ChannelLiveID);
-                    stream_notification("Chouchougeekart", ChannelLiveID);
+                    stream_notification("geof2810", ChannelGeofTestID);
+					//clips_notification("geof2810", ChannelGeofTestID);
+                    stream_notification("dovvzie", ChannelLiveID);
+                    stream_notification("chouchougeekart", ChannelLiveID);
                     stream_notification("liguecosplay", ChannelLigueID);
                 }
             })
         }
-	}, 10000)
+	}, 15000)
 });
 
 
@@ -211,14 +295,19 @@ client.on('message', (message) => {
 			if(message === "token_null" || message === "token_outdated") {
 				console.log("Token Authentication First")
 				twitch_authentication().then(() => {
-					stream_notification("geof2810", ChannelTestID);
+					stream_notification("geof2810", ChannelGeofTestID);
 				})
 			}
 			else if(message === "token_valid"){
-				stream_notification("geof2810", ChannelTestID);
+				stream_notification("geof2810", ChannelGeofTestID);
 			}
 		})
 	}
+
+     if (message.content === '!forceStream' && botAdmin.includes(message.author.id.toString())) {
+         let result = get_announce_embed("liguecosplay","test Celkae random", "https://raw.githubusercontent.com/Dowzie/Bowtzie/master/streaming_announce/", "0")
+         message.reply({"embed":result})
+     }
 
 	// Admin Commands
     if (message.content === '!mutebot' && botAdmin.includes(message.author.id.toString())){
@@ -229,10 +318,6 @@ client.on('message', (message) => {
  
     // >>> Fun Commands
 
-    /*if (message.content.toLowerCase().includes('dovvzie', 0)){
-        message.channel.send('<@194524212134674432> c\'est un gros caca !');
-        message.channel.send('<@253491625328771073> AUSSI !');
-    }*/
     if (message.content.toLowerCase().includes('faute de jezal',0)){
       message.reply('Tut tut tut ! Comme inscrit dans la constitution, c\'est la faute A Jezal !');
     }
