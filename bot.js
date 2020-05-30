@@ -21,7 +21,7 @@ const ChannelLigueID = "695943025855037440";
 const ChannelTestID = "614263675947188231";
 const ChannelGeofTestID = "618874167810326561";
 
-let ChannelOnLive = {"chouchougeekart": 1, "dovvzie": 1, "geof2810": 1,"liguecosplay": 1};
+let ChannelOnLive = {"chouchougeekart": 1, "dovvzie": 1, "geof2810": 1,"liguecosplay": 0};
 let streamersOnLigue = ["dowzie", "osanguine", "shinosan", "chouchou", "tsukiyo", "celkae", "mathoz", "radio cosplay", "secrets de cosplay", "ecc"]
 
 // >> Functions
@@ -123,7 +123,6 @@ function get_announce_embed(target, title, image_url, timestamp){
 		image = prefix_url + "generic_announce.png";
 		for(let i = 0; i < streamersOnLigue.length; i++){
 			if(title.toLowerCase().includes(streamersOnLigue[i].toLowerCase(), 0)){
-				console.log(streamersOnLigue[i]+" detected")
 				image = prefix_url + streamersOnLigue[i].toLowerCase().replace(" ","_")+"_announce.png";
 			}
 		}
@@ -294,7 +293,6 @@ client.on('message', (message) => {
     // Test Commands
 	 if (message.content === '!testStream' && botAdmin.includes(message.author.id.toString())){
 		 let emb = get_announce_embed("liguecosplay", "test radio cosplay", "", 0)
-		 console.log(emb.image)
 		 message.reply({"embed": emb})
 	 }
 
