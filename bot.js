@@ -256,7 +256,6 @@ client.on('ready', () => {
                 if(message === "token_null" || message === "token_outdated") {
                     twitch_authentication().then(() => {
                         stream_notification("geof2810", ChannelGeofTestID);
-                        //clips_notification("geof2810", ChannelGeofTestID);
                         stream_notification("dovvzie", ChannelLiveID);
                         stream_notification("chouchougeekart", ChannelLiveID);
                         stream_notification("liguecosplay", ChannelGeofTestID);
@@ -264,7 +263,6 @@ client.on('ready', () => {
                 }
                 else if(message === "token_valid"){
                     stream_notification("geof2810", ChannelGeofTestID);
-					//clips_notification("geof2810", ChannelGeofTestID);
                     stream_notification("dovvzie", ChannelLiveID);
                     stream_notification("chouchougeekart", ChannelLiveID);
                     stream_notification("liguecosplay", ChannelGeofTestID);
@@ -294,7 +292,7 @@ client.on('message', (message) => {
 	 
     // Test Commands
 	 if (message.content === '!testStream' && botAdmin.includes(message.author.id.toString())){
-         let emb = new Discord.MessageEmbed().setTitle("title").setColor(0x02d414).setImage("https://raw.githubusercontent.com/Dowzie/Bowtzie/master/streaming_announce/geof2810_announce.png").setTimestamp(0)
+         let emb = new Discord.MessageEmbed().setTitle("test radio cosplay").setColor(0x02d414).setImage("https://raw.githubusercontent.com/Dowzie/Bowtzie/master/streaming_announce/geof2810_announce.png").setTimestamp(0)
              .setFooter("twitch.tv/geof2810").setURL("https://twitch.tv/geof2810").setThumbnail("https://www.icone-png.com/png/52/51911.png");
 		 message.reply({"embed": emb})
 	 }
