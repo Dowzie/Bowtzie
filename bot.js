@@ -292,8 +292,7 @@ client.on('message', (message) => {
 	 
     // Test Commands
 	 if (message.content === '!testStream' && botAdmin.includes(message.author.id.toString())){
-         let emb = new Discord.MessageEmbed().setTitle("test radio cosplay").setColor(0x02d414).setImage("https://raw.githubusercontent.com/Dowzie/Bowtzie/master/streaming_announce/geof2810_announce.png").setTimestamp(0)
-             .setFooter("twitch.tv/geof2810").setURL("https://twitch.tv/geof2810").setThumbnail("https://www.icone-png.com/png/52/51911.png");
+		 let emb = get_announce_embed("liguecosplay", "test radio cosplay", "", 0)
 		 message.reply({"embed": emb})
 	 }
 
