@@ -258,14 +258,14 @@ client.on('ready', () => {
                         stream_notification("geof2810", ChannelGeofTestID);
                         stream_notification("dovvzie", ChannelLiveID);
                         stream_notification("chouchougeekart", ChannelLiveID);
-                        stream_notification("liguecosplay", ChannelGeofTestID);
+                        stream_notification("liguecosplay", ChannelLigueID);
                     })
                 }
                 else if(message === "token_valid"){
                     stream_notification("geof2810", ChannelGeofTestID);
                     stream_notification("dovvzie", ChannelLiveID);
                     stream_notification("chouchougeekart", ChannelLiveID);
-                    stream_notification("liguecosplay", ChannelGeofTestID);
+                    stream_notification("liguecosplay", ChannelLigueID);
                 }
             })
         }
