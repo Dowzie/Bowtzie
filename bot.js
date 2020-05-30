@@ -21,7 +21,7 @@ const ChannelLigueID = "695943025855037440";
 const ChannelTestID = "614263675947188231";
 const ChannelGeofTestID = "618874167810326561";
 
-let ChannelOnLive = {"chouchougeekart": 1, "dovvzie": 1, "geof2810": 1,"liguecosplay": 1};
+let ChannelOnLive = {"chouchougeekart": 1, "dovvzie": 1, "geof2810": 0,"liguecosplay": 1};
 let streamersOnLigue = ["dowzie", "osanguine", "shinosan", "chouchou", "tsukiyo", "celkae", "mathoz"]
 
 // >> Functions
@@ -163,12 +163,16 @@ function stream_notification(target, channelID){
 										.replace(/{width}/, "60").replace(/{height}/, "80")
 									emb.setThumbnail(game_played)
 										.addField('En live sur', game_info["data"][0]["name"], true)
+                                    channel.send(message,{"embed": emb});
 								})
 							})
 							req2.on('error', (error) => {console.log(error)})
 							req2.end()
 						}
-						channel.send(message,{"embed": emb});
+						else{
+                            channel.send(message,{"embed": emb});
+                        }
+
 					}
 				}
 			}
@@ -255,7 +259,7 @@ client.on('ready', () => {
                         //clips_notification("geof2810", ChannelGeofTestID);
                         stream_notification("dovvzie", ChannelLiveID);
                         stream_notification("chouchougeekart", ChannelLiveID);
-                        stream_notification("liguecosplay", ChannelLigueID);
+                        stream_notification("liguecosplay", ChannelGeofTestID);
                     })
                 }
                 else if(message === "token_valid"){
@@ -263,7 +267,7 @@ client.on('ready', () => {
 					//clips_notification("geof2810", ChannelGeofTestID);
                     stream_notification("dovvzie", ChannelLiveID);
                     stream_notification("chouchougeekart", ChannelLiveID);
-                    stream_notification("liguecosplay", ChannelLigueID);
+                    stream_notification("liguecosplay", ChannelGeofTestID);
                 }
             })
         }
@@ -289,25 +293,14 @@ client.on('message', (message) => {
     }
 	 
     // Test Commands
-	if (message.content === '!testStream' && botAdmin.includes(message.author.id.toString())) {
-		twitch_validation().then((message) => {
-			console.log(message)
-			if(message === "token_null" || message === "token_outdated") {
-				console.log("Token Authentication First")
-				twitch_authentication().then(() => {
-					stream_notification("geof2810", ChannelGeofTestID);
-				})
-			}
-			else if(message === "token_valid"){
-				stream_notification("geof2810", ChannelGeofTestID);
-			}
-		})
-	}
+	 if (message.content === '!testStream' && botAdmin.includes(message.author.id.toString())){
+         let emb = new Discord.MessageEmbed().setTitle("title").setColor(0x02d414).setImage("https://raw.githubusercontent.com/Dowzie/Bowtzie/master/streaming_announce/geof2810_announce.png").setTimestamp(0)
+             .setFooter("twitch.tv/geof2810").setURL("https://twitch.tv/geof2810").setThumbnail("https://www.icone-png.com/png/52/51911.png");
+		 message.reply({"embed": emb})
+	 }
 
-     if (message.content === '!forceStream' && botAdmin.includes(message.author.id.toString())) {
-         let result = get_announce_embed("liguecosplay","test Celkae random", "https://raw.githubusercontent.com/Dowzie/Bowtzie/master/streaming_announce/", "0")
-         message.reply({"embed":result})
-     }
+
+
 
 	// Admin Commands
     if (message.content === '!mutebot' && botAdmin.includes(message.author.id.toString())){
