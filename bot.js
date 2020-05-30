@@ -123,7 +123,7 @@ function get_announce_embed(target, title, image_url, timestamp){
 		image = prefix_url + "generic_announce.png";
 		for(let i = 0; i < streamersOnLigue.length; i++){
 			if(title.toLowerCase().includes(streamersOnLigue[i].toLowerCase(), 0)){
-				image = prefix_url + streamersOnLigue[i].toLowerCase()+"_announce.png";
+				image = prefix_url + streamersOnLigue[i].toLowerCase().replace(/ /,"_")+"_announce.png";
 			}
 		}
 	}
