@@ -123,7 +123,8 @@ function get_announce_embed(target, title, image_url, timestamp){
 		image = prefix_url + "generic_announce.png";
 		for(let i = 0; i < streamersOnLigue.length; i++){
 			if(title.toLowerCase().includes(streamersOnLigue[i].toLowerCase(), 0)){
-				image = prefix_url + streamersOnLigue[i].toLowerCase().replace(/ /,"_")+"_announce.png";
+				console.log(streamersOnLigue[i]+" detected")
+				image = prefix_url + streamersOnLigue[i].toLowerCase().replace(" ","_")+"_announce.png";
 			}
 		}
 	}
@@ -293,6 +294,7 @@ client.on('message', (message) => {
     // Test Commands
 	 if (message.content === '!testStream' && botAdmin.includes(message.author.id.toString())){
 		 let emb = get_announce_embed("liguecosplay", "test radio cosplay", "", 0)
+		 console.log(emb.image)
 		 message.reply({"embed": emb})
 	 }
 
