@@ -131,11 +131,11 @@ function get_announce_embed(target, title, image_url, timestamp) {
     let image = image_url.replace(/{width}/, "356").replace(/{height}/, "200");
     if (target === 'liguecosplay') {
         image = prefix_url + "generic_announce.png";
-        for (let i = 0; i < streamersOnLigue.length; i++) {
+        /*for (let i = 0; i < streamersOnLigue.length; i++) {
             if (title.toLowerCase().includes(streamersOnLigue[i].toLowerCase(), 0)) {
                 image = prefix_url + streamersOnLigue[i].toLowerCase().replace(" ", "_") + "_announce.png";
             }
-        }
+        }*/
     }
     if (target === 'geof2810') {
         image = prefix_url + "geof2810_announce.png";
