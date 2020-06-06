@@ -22,7 +22,7 @@ const ChannelLigueID = "695943025855037440";
 const ChannelTestID = "614263675947188231";
 const ChannelGeofTestID = "618874167810326561";
 
-let ChannelOnLive = {"chouchougeekart": 1, "dovvzie": 1, "geof2810": 1, "liguecosplay": 0};
+let ChannelOnLive = {"chouchougeekart": 1, "dovvzie": 1, "geof2810": 1, "liguecosplay": 1};
 let streamersOnLigue = ["dowzie", "osanguine", "shinosan", "chouchou", "tsukiyo", "celkae", "mathoz", "radio cosplay", "secret de cosplay","secrets de cosplay", "ecc"]
 
 // >> Functions
@@ -131,17 +131,17 @@ function get_announce_embed(target, title, image_url, timestamp) {
     let image = image_url.replace(/{width}/, "356").replace(/{height}/, "200");
     if (target === 'liguecosplay') {
         image = prefix_url + "generic_announce.png";
-        /*for (let i = 0; i < streamersOnLigue.length; i++) {
+        let regexValue = new RegExp(/ /g)
+        for (let i = 0; i < streamersOnLigue.length; i++) {
             if (title.toLowerCase().includes(streamersOnLigue[i].toLowerCase(), 0)) {
-                image = prefix_url + streamersOnLigue[i].toLowerCase().replace(" ", "_") + "_announce.png";
+                image = prefix_url + streamersOnLigue[i].toLowerCase().replace(regexValue, "_") + "_announce.png";
             }
-        }*/
+        }
     }
     if (target === 'geof2810') {
         image = prefix_url + "geof2810_announce.png";
     }
-    return new Discord.MessageEmbed().setTitle(title).setColor(0x02d414).setImage(image).setTimestamp(timestamp)
-        .setFooter("twitch.tv/" + target).setURL("https://twitch.tv/" + target);
+    return result
 }
 
 function stream_notification(target, channelID) {
@@ -356,7 +356,7 @@ client.on('message', async(message) => {
 
         // Test Commands
         if (message.content === '!testStream' && botAdmin.includes(message.author.id.toString())) {
-            let emb = get_announce_embed("liguecosplay", "test radio cosplay", "", 0)
+            let emb = get_announce_embed("liguecosplay", "SECRET DE COSPLAY - Tous les détails du costume de FREYA w/ Chouchou et Dowzie", "", 0)
             message.reply({"embed": emb})
         }
 
