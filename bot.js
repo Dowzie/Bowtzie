@@ -23,7 +23,7 @@ const ChannelTestID = "614263675947188231";
 const ChannelGeofTestID = "618874167810326561";
 
 let ChannelOnLive = {"chouchougeekart": 1, "dovvzie": 1, "geof2810": 1, "liguecosplay": 1};
-let streamersOnLigue = ["dowzie", "osanguine", "shinosan", "chouchou", "tsukiyo", "celkae", "mathoz", "radio cosplay", "secrets de cosplay", "ecc"]
+let streamersOnLigue = ["dowzie", "osanguine", "shinosan", "chouchou", "tsukiyo", "celkae", "mathoz", "radio cosplay", "secret de cosplay","secrets de cosplay", "ecc"]
 
 // >> Functions
 
