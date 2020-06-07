@@ -22,7 +22,7 @@ const ChannelLigueID = "695943025855037440";
 const ChannelTestID = "614263675947188231";
 const ChannelGeofTestID = "618874167810326561";
 
-let ChannelOnLive = {"chouchougeekart": 0, "dovvzie": 1, "geof2810": 1, "liguecosplay": 1};
+let ChannelOnLive = {"chouchougeekart": 1, "dovvzie": 1, "geof2810": 1, "liguecosplay": 1};
 let streamersOnLigue = ["dowzie", "osanguine", "shinosan", "chouchou", "tsukiyo", "celkae", "mathoz", "radio cosplay", "secret de cosplay","secrets de cosplay", "ecc"]
 
 // >> Functions
@@ -142,7 +142,10 @@ function get_announce_embed(target, title, image_url, timestamp) {
         image = prefix_url + "geof2810_announce.png";
     }
     if (target === 'chouchougeekart'){
-        image = prefix_url + "chouchougeekart_announce.png";
+        image = prefix_url + "chouchou_announce.png";
+    }
+    if (target === "dovvzie"){
+        image = prefix_url + "dowzie_announce.png";
     }
     let result = new Discord.MessageEmbed().setTitle(title).setColor(0x02d414).setImage(image).setTimestamp(timestamp)
         .setFooter("twitch.tv/" + target).setURL("https://twitch.tv/" + target);
@@ -360,8 +363,17 @@ client.on('message', async(message) => {
         }
 
         // Test Commands
-        if (message.content === '!testStream' && botAdmin.includes(message.author.id.toString())) {
-            let emb = get_announce_embed("liguecosplay", "SECRET DE COSPLAY - Tous les détails du costume de FREYA w/ Chouchou et Dowzie", "", 0)
+        if (message.content.includes('!testStream') && botAdmin.includes(message.author.id.toString())) {
+            let emb = null;
+            if (message.content.includes('chouchougeekart')){
+                emb = get_announce_embed("chouchougeekart", "test chouchougeekart", "", 0)
+            }
+            if (message.content.includes('dovvzie')){
+                emb = get_announce_embed("dovvzie", "test dovvzie", "", 0)
+            }
+            if (message.content.includes('liguecosplay')){
+                emb = get_announce_embed("liguecosplay", "SECRET DE COSPLAY - Tous les détails du costume de FREYA w/ Chouchou et Dowzie", "", 0)
+            }
             message.reply({"embed": emb})
         }
 
