@@ -144,6 +144,8 @@ function get_announce_embed(target, title, image_url, timestamp) {
     if (target === 'chouchougeekart'){
         image = prefix_url + "chouchougeekart_announce.png";
     }
+    let result = new Discord.MessageEmbed().setTitle(title).setColor(0x02d414).setImage(image).setTimestamp(timestamp)
+        .setFooter("twitch.tv/" + target).setURL("https://twitch.tv/" + target);
     return result
 }
 
