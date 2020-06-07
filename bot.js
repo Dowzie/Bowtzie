@@ -355,9 +355,6 @@ client.on('message', async(message) => {
             }
         }
 
-
-
-
         if (message.content === '!help') {
             message.reply('Voici les differentes commandes disponibles : \n !ping \n !tipeee \n !chouchou \n !dowzie \n et d\'autres plus secrètes :wink:');
         }
