@@ -127,28 +127,36 @@ function get_announce_title(target) {
 }
 
 function get_announce_embed(target, title, image_url, timestamp) {
-    let prefix_url = "https://raw.githubusercontent.com/Dowzie/Bowtzie/master/streaming_announce/";
-    let image = image_url.replace(/{width}/, "356").replace(/{height}/, "200");
-    if (target === 'liguecosplay') {
-        image = prefix_url + "generic_announce.png";
-        let regexValue = new RegExp(/ /g)
-        for (let i = 0; i < streamersOnLigue.length; i++) {
-            if (title.toLowerCase().includes(streamersOnLigue[i].toLowerCase(), 0)) {
-                image = prefix_url + streamersOnLigue[i].toLowerCase().replace(regexValue, "_") + "_announce.png";
+    let result = new Discord.MessageEmbed().setTitle(title).setColor(0x02d414).setTimestamp(timestamp)
+        .setFooter("twitch.tv/" + target).setURL("https://twitch.tv/" + target);
+    let image = null;
+    try{
+        let prefix_url = "https://raw.githubusercontent.com/Dowzie/Bowtzie/master/streaming_announce/";
+        image = image_url.replace(/{width}/, "356").replace(/{height}/, "200");
+        if (target === 'liguecosplay') {
+            image = prefix_url + "generic_announce.png";
+            let regexValue = new RegExp(/ /g)
+            for (let i = 0; i < streamersOnLigue.length; i++) {
+                if (title.toLowerCase().includes(streamersOnLigue[i].toLowerCase(), 0)) {
+                    image = prefix_url + streamersOnLigue[i].toLowerCase().replace(regexValue, "_") + "_announce.png";
+                }
             }
         }
+        if (target === 'geof2810') {
+            image = prefix_url + "geof2810_announce.png";
+        }
+        if (target === 'chouchougeekart'){
+            image = prefix_url + "chouchou_announce.png";
+        }
+        if (target === "dovvzie"){
+            image = prefix_url + "dowzie_announce.png";
+        }
     }
-    if (target === 'geof2810') {
-        image = prefix_url + "geof2810_announce.png";
+    catch(e){
+        console.log(e)
+        image = image_url.replace(/{width}/, "356").replace(/{height}/, "200");
     }
-    if (target === 'chouchougeekart'){
-        image = prefix_url + "chouchou_announce.png";
-    }
-    if (target === "dovvzie"){
-        image = prefix_url + "dowzie_announce.png";
-    }
-    let result = new Discord.MessageEmbed().setTitle(title).setColor(0x02d414).setImage(image).setTimestamp(timestamp)
-        .setFooter("twitch.tv/" + target).setURL("https://twitch.tv/" + target);
+    result.setImage(image)
     return result
 }
 
@@ -334,8 +342,6 @@ client.on('message', async(message) => {
 
         let d = new Date();
         let currTimeStamp = d.getTime();
-
-
         if (message.author.id.toString() === "406137148216180747" || message.author.id.toString() === "253491625328771073"){
             // Detect if B__ora sent an image
             let screen_content = message.attachments.entries()
@@ -374,20 +380,18 @@ client.on('message', async(message) => {
             message.reply({"embed": emb})
         }
 
-
         // Admin Commands
+
         if (message.content === '!mutebot' && botAdmin.includes(message.author.id.toString())) {
             botMuted = true
             message.reply('Ben si c\'est comme ca , moi je me casse !')
         }
-
 
         // >>> Fun Commands
 
         if (message.content.toLowerCase().includes('faute de jezal', 0)) {
             message.reply('Tut tut tut ! Comme inscrit dans la constitution, c\'est la faute A Jezal !');
         }
-
         if (message.content.toLowerCase().includes('prout', 0)) {
             message.reply('C\'est toi le prout !');
         }
