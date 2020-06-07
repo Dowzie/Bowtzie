@@ -22,7 +22,7 @@ const ChannelLigueID = "695943025855037440";
 const ChannelTestID = "614263675947188231";
 const ChannelGeofTestID = "618874167810326561";
 
-let ChannelOnLive = {"chouchougeekart": 1, "dovvzie": 1, "geof2810": 1, "liguecosplay": 1};
+let ChannelOnLive = {"chouchougeekart": 0, "dovvzie": 1, "geof2810": 1, "liguecosplay": 1};
 let streamersOnLigue = ["dowzie", "osanguine", "shinosan", "chouchou", "tsukiyo", "celkae", "mathoz", "radio cosplay", "secret de cosplay","secrets de cosplay", "ecc"]
 
 // >> Functions
@@ -140,6 +140,9 @@ function get_announce_embed(target, title, image_url, timestamp) {
     }
     if (target === 'geof2810') {
         image = prefix_url + "geof2810_announce.png";
+    }
+    if (target === 'chouchougeekart'){
+        image = prefix_url + "chouchougeekart_announce.png";
     }
     return result
 }
