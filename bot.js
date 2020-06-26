@@ -2,7 +2,6 @@
 
 const Discord = require('discord.js');
 const https = require('https');
-const cryptoMD5 = require('crypto-js/md5')
 const client = new Discord.Client();
 
 // Global Variables - State of Bot
@@ -23,7 +22,19 @@ const ChannelTestID = "614263675947188231";
 const ChannelGeofTestID = "618874167810326561";
 
 let ChannelOnLive = {"chouchougeekart": 1, "dovvzie": 1, "geof2810": 1, "liguecosplay": 1};
-let streamersOnLigue = ["dowzie", "osanguine", "shinosan", "chouchou", "tsukiyo", "celkae", "mathoz", "radio cosplay", "secret de cosplay","secrets de cosplay", "ecc"]
+let streamersAssets = {"celkae": ["celkae_1.png", "celkae_2.png", "celkae_3.png", "celkae_4.png"],
+    "chouchou": ["chouchou_1.png", "chouchou_2.png", "chouchou_3.png", "chouchou_4.png"],
+    "dowzie": ["dowzie_1.png", "dowzie_2.png", "dowzie_3.png", "dowzie_4.png"],
+    "ecc": ["ecc_1.png"],
+    "geof2810": ["geof2810_1.png"],
+    "mathoz": ["mathoz_1.png", "mathoz_2.png", "mathoz_3.png", "mathoz_4.png"],
+    "osanguine": ["osanguine_1.png", "osanguine_2.png", "osanguine_3.png", "osanguine_4.png"],
+    "radio cosplay": ["radio_cosplay_announce.png"],
+    "secret de cosplay": ["secret_de_cosplay_announce.png"],
+    "secrets de cosplay": ["secret_de_cosplay_announce.png"],
+    "shinosan": ["shinosan_1.png", "shinosan_2.png", "shinosan_3.png", "shinosan_4.png"],
+    "tsukiyo": ["tsukiyo_1.png", "tsukiyo_2.png", "tsukiyo_3.png", "tsukiyo_4.png"]
+}
 
 // >> Functions
 
@@ -131,32 +142,37 @@ function get_announce_embed(target, title, image_url, timestamp) {
         .setFooter("twitch.tv/" + target).setURL("https://twitch.tv/" + target);
     let image = null;
     try{
-        let prefix_url = "https://raw.githubusercontent.com/Dowzie/Bowtzie/master/streaming_announce/";
         image = image_url.replace(/{width}/, "356").replace(/{height}/, "200");
         if (target === 'liguecosplay') {
-            image = prefix_url + "generic_announce.png";
+            image = "generic.png";
             let regexValue = new RegExp(/ /g)
-            for (let i = 0; i < streamersOnLigue.length; i++) {
-                if (title.toLowerCase().includes(streamersOnLigue[i].toLowerCase(), 0)) {
-                    image = prefix_url + streamersOnLigue[i].toLowerCase().replace(regexValue, "_") + "_announce.png";
+            let streamersKeys = Object.keys(streamersAssets)
+            for (let i = 0; i < streamersKeys.length; i++) {
+                if (title.toLowerCase().includes(streamersKeys[i].toLowerCase(), 0)) {
+                    let listAsset = streamersAssets[streamersKeys[i]]
+                    let screen_id = Math.floor(Math.random() * listAsset.length)
+                    image = listAsset[screen_id];
                 }
             }
         }
         if (target === 'geof2810') {
-            image = prefix_url + "geof2810_announce.png";
+            image = streamersAssets["geof2810"][0]
         }
         if (target === 'chouchougeekart'){
-            image = prefix_url + "chouchou_announce.png";
+            let screen_id = Math.floor(Math.random() * streamersAssets["chouchou"].length)
+            image = streamersAssets["chouchou"][screen_id];
         }
-        if (target === "dovvzie"){
-            image = prefix_url + "dowzie_announce.png";
+        if (target === 'dovvzie'){
+            let screen_id = Math.floor(Math.random() * streamersAssets["dowzie"].length)
+            image = streamersAssets["dowzie"][screen_id];
         }
+        result.attachFiles(["streaming_announce/"+image]).setImage("attachment://"+image)
     }
     catch(e){
         console.log(e)
         image = image_url.replace(/{width}/, "356").replace(/{height}/, "200");
+        result.setImage(image)
     }
-    result.setImage(image)
     return result
 }
 
@@ -375,7 +391,7 @@ client.on('message', async(message) => {
                 emb = get_announce_embed("dovvzie", "test dovvzie", "", 0)
             }
             if (message.content.includes('liguecosplay')){
-                emb = get_announce_embed("liguecosplay", "SECRET DE COSPLAY - Tous les détails du costume de FREYA w/ Chouchou et Dowzie", "", 0)
+                emb = get_announce_embed("liguecosplay", "tsukiyo", "", 0)
             }
             message.reply({"embed": emb})
         }
