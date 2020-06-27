@@ -25,15 +25,17 @@ let ChannelOnLive = {"chouchougeekart": 1, "dovvzie": 1, "geof2810": 1, "ligueco
 let streamersAssets = {"celkae": ["celkae_1.png", "celkae_2.png", "celkae_3.png", "celkae_4.png"],
     "chouchou": ["chouchou_1.png", "chouchou_2.png", "chouchou_3.png", "chouchou_4.png"],
     "dowzie": ["dowzie_1.png", "dowzie_2.png", "dowzie_3.png", "dowzie_4.png"],
-    "ecc": ["ecc_1.png"],
     "geof2810": ["geof2810_1.png"],
     "mathoz": ["mathoz_1.png", "mathoz_2.png", "mathoz_3.png", "mathoz_4.png"],
     "osanguine": ["osanguine_1.png", "osanguine_2.png", "osanguine_3.png", "osanguine_4.png"],
+    "shinosan": ["shinosan_1.png", "shinosan_2.png", "shinosan_3.png", "shinosan_4.png"],
+    "tsukiyo": ["tsukiyo_1.png", "tsukiyo_2.png", "tsukiyo_3.png", "tsukiyo_4.png"],
+    "ecc": ["ecc_1.png"],
+    "extraordinaire cosplay challenge": ["ecc_1.png"],
     "radio cosplay": ["radio_cosplay_announce.png"],
     "secret de cosplay": ["secret_de_cosplay_announce.png"],
     "secrets de cosplay": ["secret_de_cosplay_announce.png"],
-    "shinosan": ["shinosan_1.png", "shinosan_2.png", "shinosan_3.png", "shinosan_4.png"],
-    "tsukiyo": ["tsukiyo_1.png", "tsukiyo_2.png", "tsukiyo_3.png", "tsukiyo_4.png"]
+    "cosplay for pet": ["Cosplay_for_Pet.png"]
 }
 
 // >> Functions
