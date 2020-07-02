@@ -22,6 +22,8 @@ const ChannelTestID = "614263675947188231";
 const ChannelGeofTestID = "618874167810326561";
 
 let ChannelOnLive = {"chouchougeekart": 1, "dovvzie": 1, "geof2810": 1, "liguecosplay": 1};
+
+// Priority of the screen goes from the last to the first keys of this dictionary.
 let streamersAssets = {"celkae": ["celkae_1.png", "celkae_2.png", "celkae_3.png", "celkae_4.png"],
     "chouchou": ["chouchou_1.png", "chouchou_2.png", "chouchou_3.png", "chouchou_4.png"],
     "dowzie": ["dowzie_1.png", "dowzie_2.png", "dowzie_3.png", "dowzie_4.png"],
@@ -194,8 +196,8 @@ function stream_notification(target, channelID) {
                     if (ChannelOnLive[target] === 0) {
                         ChannelOnLive[target] = 1
                         let userStreaming = response["data"][0]
-                        let message = get_announce_title(userStreaming["user_name"]);
-                        let emb = get_announce_embed(userStreaming["user_name"], userStreaming["title"],
+                        let message = get_announce_title(userStreaming["user_name"].toLowerCase());
+                        let emb = get_announce_embed(userStreaming["user_name"].toLowerCase(), userStreaming["title"],
                             userStreaming["thumbnail_url"], userStreaming["timestamp"]);
 
                         if (userStreaming["game_id"]) {
