@@ -12,19 +12,26 @@ let refresh_token = null;
 let expires_token = null;
 
 // >> Discord Variables
-let lastGiveAway = null;
-let lastClipTime = new Date();
-let botMuted = false;
-const botAdmin = ["194524212134674432", "253491625328771073", "283740549448597505"]
-const ChannelLiveID = "453256711935885314";
-const ChannelLigueID = "695943025855037440";
-const ChannelTestID = "614263675947188231";
-const ChannelGeofTestID = "618874167810326561";
+let last_give_away = null;
 
-let ChannelOnLive = {"chouchougeekart": 1, "dovvzie": 1, "geof2810": 1, "liguecosplay": 1};
+// >> >> Clips specific variables
+let last_clip_time_start = new Date();
+last_clip_time_start.setTime(last_clip_time_start.getTime() - 10*60*1000) // Detect during the last minute
+let recent_clips_id = [];
+
+
+let bot_muted = false;
+const bot_admin = ["194524212134674432", "253491625328771073", "283740549448597505"]
+const channel_live_id = "453256711935885314";
+const channel_ligue_id = "695943025855037440";
+const channel_clips_id = "693665642875977808";
+const channel_test_id = "614263675947188231";
+const channel_geof_test_id = "618874167810326561";
+
+let channel_on_live = {"chouchougeekart": 1, "dovvzie": 1, "geof2810": 1, "liguecosplay": 1};
 
 // Priority of the screen goes from the last to the first keys of this dictionary.
-let streamersAssets = {"celkae": ["celkae_1.png", "celkae_2.png", "celkae_3.png", "celkae_4.png"],
+let streamers_assets = {"celkae": ["celkae_1.png", "celkae_2.png", "celkae_3.png", "celkae_4.png"],
     "chouchou": ["chouchou_1.png", "chouchou_2.png", "chouchou_3.png", "chouchou_4.png"],
     "dowzie": ["dowzie_1.png", "dowzie_2.png", "dowzie_3.png", "dowzie_4.png"],
     "geof2810": ["geof2810_1.png"],
@@ -42,6 +49,8 @@ let streamersAssets = {"celkae": ["celkae_1.png", "celkae_2.png", "celkae_3.png"
 }
 
 // >> Functions
+
+// >> >> Twitch specifics
 
 function build_options(type, target, game_id, pagination = null) {
     let options = {
@@ -63,7 +72,8 @@ function build_options(type, target, game_id, pagination = null) {
         } else if (type === "users") {
             options["path"] = "/helix/users?login=" + target
         } else if (type === "clips") {
-            options["path"] = "/helix/clips?broadcaster_id=" + target + "&first=100"//&started_at="+lastClipTime.toISOString()
+            //options["path"] = "/helix/clips?broadcaster_id=" + target + "&first=100"//&started_at="+lastClipTime.toISOString()
+            options["path"] = "/helix/clips?broadcaster_id=" + target + "&started_at="+last_clip_time_start.toISOString();
             if (pagination !== null) {
                 options["path"] += "&after=" + pagination
             }
@@ -134,6 +144,8 @@ function twitch_authentication() {
     })
 }
 
+// >> >> Streams notification
+
 function get_announce_title(target) {
     let target_nice = target
     if (target === "liguecosplay") {
@@ -151,25 +163,25 @@ function get_announce_embed(target, title, image_url, timestamp) {
         if (target === 'liguecosplay') {
             image = "generic.png";
             let regexValue = new RegExp(/ /g)
-            let streamersKeys = Object.keys(streamersAssets)
+            let streamersKeys = Object.keys(streamers_assets)
             for (let i = 0; i < streamersKeys.length; i++) {
                 if (title.toLowerCase().includes(streamersKeys[i].toLowerCase(), 0)) {
-                    let listAsset = streamersAssets[streamersKeys[i]]
+                    let listAsset = streamers_assets[streamersKeys[i]]
                     let screen_id = Math.floor(Math.random() * listAsset.length)
                     image = listAsset[screen_id];
                 }
             }
         }
         if (target === 'geof2810') {
-            image = streamersAssets["geof2810"][0]
+            image = streamers_assets["geof2810"][0]
         }
         if (target === 'chouchougeekart'){
-            let screen_id = Math.floor(Math.random() * streamersAssets["chouchou"].length)
-            image = streamersAssets["chouchou"][screen_id];
+            let screen_id = Math.floor(Math.random() * streamers_assets["chouchou"].length)
+            image = streamers_assets["chouchou"][screen_id];
         }
         if (target === 'dovvzie'){
-            let screen_id = Math.floor(Math.random() * streamersAssets["dowzie"].length)
-            image = streamersAssets["dowzie"][screen_id];
+            let screen_id = Math.floor(Math.random() * streamers_assets["dowzie"].length)
+            image = streamers_assets["dowzie"][screen_id];
         }
         result.attachFiles(["streaming_announce/"+image]).setImage("attachment://"+image)
     }
@@ -191,11 +203,11 @@ function stream_notification(target, channelID) {
                 console.log(response)
             } else {
                 if (response["data"].length === 0) {
-                    ChannelOnLive[target] = 0;
+                    channel_on_live[target] = 0;
                     console.log(target + " not online ... 10 sec");
                 } else {
-                    if (ChannelOnLive[target] === 0) {
-                        ChannelOnLive[target] = 1
+                    if (channel_on_live[target] === 0) {
+                        channel_on_live[target] = 1
                         let userStreaming = response["data"][0]
                         let message = get_announce_title(userStreaming["user_name"].toLowerCase());
                         let emb = get_announce_embed(userStreaming["user_name"].toLowerCase(), userStreaming["title"],
@@ -233,7 +245,9 @@ function stream_notification(target, channelID) {
     req.end();
 }
 
-function clips_notification(target, channelID) {
+// >> >> Clips Notifications
+
+function clips_notification(target, channelID, firstCall = false) {
     const channel = client.channels.cache.get(channelID);
     const options = build_options("users", target, undefined);
 
@@ -243,15 +257,17 @@ function clips_notification(target, channelID) {
             result_buffer += d;
         })
         res.on("end", async () => {
-            let result = JSON.parse(result_buffer)
+            let result = JSON.parse(result_buffer);
             let result_id = result["data"][0]["id"];
 
             let pagination = null;
             let clips_results = null;
+
+
             while (pagination === null || Object.keys(pagination).length !== 0) {
                 if (pagination === null) {
                     await get_clips_list(result_id).then((message) => {
-                        clips_results = message
+                        clips_results = message;
                     })
                 } else {
                     await get_clips_list(result_id, pagination["cursor"]).then((message) => {
@@ -260,21 +276,22 @@ function clips_notification(target, channelID) {
                 }
 
                 for (let i = 0; i < clips_results["data"].length; i++) {
-                    let url = clips_results["data"][i]["url"]
-                    let creation_date = clips_results["data"][i]["created_at"]
+                    let id = clips_results["data"][i]["id"];
+                    let url = clips_results["data"][i]["url"];
 
-                    let creation_date_object = new Date(creation_date)
-                    console.log(creation_date_object)
-                    console.log(lastClipTime)
-                    console.log(url)
-                    if (lastClipTime.getUTCMilliseconds() < creation_date_object.getUTCMilliseconds()) {
-                        channel.send(url)
-                        lastClipTime = creation_date_object
+                    if(firstCall == true){
+                        recent_clips_id.push(id);
                     }
+                    else{
+                        if(!recent_clips_id.includes(id)){
+                            recent_clips_id.push(id);
+                            channel.send("Nouveau clip chez "+target+": "+url);
+                        }
+                    }
+
                 }
 
                 pagination = clips_results["pagination"]
-                console.log(pagination)
             }
         })
     })
@@ -290,13 +307,13 @@ function get_clips_list(twitch_id, pagination = null) {
     return new Promise((resolve, reject) => {
         let clips_buffer = ""
         const options2 = build_options("clips", twitch_id, undefined, pagination);
-        console.log(options2)
+        //console.log(options2)
         const req = https.request(options2, (res2) => {
             res2.on("data", (d) => {
                 clips_buffer += d;
             });
             res2.on("end", () => {
-                console.log(clips_buffer)
+                //console.log(clips_buffer)
                 resolve(JSON.parse(clips_buffer))
             })
         })
@@ -308,86 +325,66 @@ function get_clips_list(twitch_id, pagination = null) {
     })
 }
 
-async function analyse_hash_file(fileURL){
-    return new Promise((resolve, reject) => {
-        let res = false;
-        https.get(fileURL, (res) => {
-            let hash_values = res.headers["x-goog-hash"].split(", ")
-            console.log(hash_values)
-            if(hash_values[1] === "md5=uTgzkqUBhAup6L+FKmKv0Q=="){
-                console.log("value true")
-                resolve(true)
-            }
-            else{
-                resolve(false)
-            }
-        }).on("error", () => {reject()})
-    })
-}
-
 // Event Manager
 
 client.on('ready', () => {
     console.log('I am ready!');
     setInterval(function () {
-        if (botMuted === false) {
+        if (bot_muted === false) {
             twitch_validation().then((message) => {
                 if (message === "token_null" || message === "token_outdated") {
                     twitch_authentication().then(() => {
-                        stream_notification("geof2810", ChannelGeofTestID);
-                        stream_notification("dovvzie", ChannelLiveID);
-                        stream_notification("chouchougeekart", ChannelLiveID);
-                        stream_notification("liguecosplay", ChannelLigueID);
+
+                        stream_notification("geof2810", channel_geof_test_id);
+                        stream_notification("dovvzie", channel_live_id);
+                        stream_notification("chouchougeekart", channel_live_id);
+                        stream_notification("liguecosplay", channel_ligue_id);
+
+                        clips_notification("geof2810", channel_geof_test_id, true);
+                        clips_notification("dovvzie", channel_clips_id, true);
+                        clips_notification("chouchougeekart", channel_clips_id, true);
+                        clips_notification("liguecosplay", channel_clips_id, true);
                     })
                 } else if (message === "token_valid") {
-                    stream_notification("geof2810", ChannelGeofTestID);
-                    stream_notification("dovvzie", ChannelLiveID);
-                    stream_notification("chouchougeekart", ChannelLiveID);
-                    stream_notification("liguecosplay", ChannelLigueID);
+
+                    stream_notification("geof2810", channel_geof_test_id);
+                    stream_notification("dovvzie", channel_live_id);
+                    stream_notification("chouchougeekart", channel_live_id);
+                    stream_notification("liguecosplay", channel_ligue_id);
+
+                    clips_notification("geof2810", channel_geof_test_id);
+                    clips_notification("dovvzie", channel_clips_id);
+                    clips_notification("chouchougeekart", channel_clips_id);
+                    clips_notification("liguecosplay", channel_clips_id);
                 }
             })
         }
+
+        last_clip_time_start.setTime(last_clip_time_start.getTime()+15*1000);
+
     }, 15000)
 });
 
 
 client.on('message', async(message) => {
-    if (!(message.author.bot) && botMuted === true) {
-        if (message.content === '!unmutebot' && botAdmin.includes(message.author.id.toString())) {
-            botMuted = false
+    if (!(message.author.bot) && bot_muted === true) {
+        if (message.content === '!unmutebot' && bot_admin.includes(message.author.id.toString())) {
+            bot_muted = false
             message.reply('Allo ?? Allooo ? Ah je suis de retour !')
         }
     }
 
-    if (!(message.author.bot) && botMuted === false) {
+    if (!(message.author.bot) && bot_muted === false) {
 
         let d = new Date();
         let currTimeStamp = d.getTime();
-        if (message.author.id.toString() === "406137148216180747" || message.author.id.toString() === "253491625328771073"){
-            // Detect if B__ora sent an image
-            let screen_content = message.attachments.entries()
-            let iterator_value = screen_content.next().value;
-            let screen_ananas = false;
-            while(iterator_value !== undefined){
-                let fileURL = iterator_value[1]["url"]
-                analyse_hash_file(fileURL).then((res) => {
-                    if(res == true) {
-                        if(screen_ananas !== true){
-                            message.reply("Ce message est une falsification. Voici la vrai image ! Certifiée par <@253491625328771073> !", {files: ['./b__ora_fake.png']})
-                        }
-                        screen_ananas = true
-                    }
-                })
-                iterator_value = screen_content.next().value;
-            }
-        }
 
         if (message.content === '!help') {
             message.reply('Voici les differentes commandes disponibles : \n !ping \n !tipeee \n !chouchou \n !dowzie \n et d\'autres plus secrètes :wink:');
         }
 
         // Test Commands
-        if (message.content.includes('!testStream') && botAdmin.includes(message.author.id.toString())) {
+        /*if (message.content.includes('!testStream') && bot_admin.includes(message.author.id.toString())) {
             let emb = null;
             if (message.content.includes('liguecosplay')){
                 emb = get_announce_embed("liguecosplay", message.content, "", 0)
@@ -401,12 +398,12 @@ client.on('message', async(message) => {
                 }
             }
             message.reply({"embed": emb})
-        }
+        }*/
 
         // Admin Commands
 
-        if (message.content === '!mutebot' && botAdmin.includes(message.author.id.toString())) {
-            botMuted = true
+        if (message.content === '!mutebot' && bot_admin.includes(message.author.id.toString())) {
+            bot_muted = true
             message.reply('Ben si c\'est comme ca , moi je me casse !')
         }
 
@@ -424,9 +421,9 @@ client.on('message', async(message) => {
         if (message.content.toLowerCase().includes('nutella', 0)) {
             message.reply({files: ['./nutella.gif']});
         }
-        if (message.content.toLowerCase().includes('giveaway', 0) && currTimeStamp - lastGiveAway > 14400000) {
+        if (message.content.toLowerCase().includes('giveaway', 0) && currTimeStamp - last_give_away > 14400000) {
             message.channel.send('Comment ?! J\'ai entendu giveaway ? je préviens tout de suite <@253491625328771073> !');
-            lastGiveAway = d.getTime();
+            last_give_away = d.getTime();
         }
 
         if (message.content === "!hipster") {
@@ -441,16 +438,13 @@ client.on('message', async(message) => {
 
         // >>> Info Commands
 
-        if (message.content === '!tipeee') {
-            message.reply('Go me support sur Tipeee si tu aime mon job, plein de trucs cool en contrepartie :wink: \nhttps://fr.tipeee.com/dowzie');
-        }
         if (message.content === '!chouchou') {
             message.reply('Go follow pour ne rien rater ! \n:dagger:  Facebook : <https://www.facebook.com/Chouchougeekart> \n \
 :dagger:  Twitter : <https://twitter.com/ChouchouGeekArt> \n:dagger:  Instagram : <https://www.instagram.com/chouchougeekart> \n:dagger:  Twitch : <https://www.twitch.tv/chouchougeekart> \n:dagger:  Site internet : <https://chouchougeekart.blogspot.com> \n:dagger:  Youtube : <https://www.youtube.com/channel/UC4YWjAguofYoh29b6rBTwCw/featured>');
         }
         if (message.content === '!dowzie') {
             message.reply('Go follow pour ne rien rater ! \n:pushpin:  Facebook : <https://www.facebook.com/DowzieCosplay> \n \
-:pushpin:  Twitter : <https://twitter.com/dovvzie> \n:pushpin:  Instagram : <https://www.instagram.com/dovvzie> \n:pushpin:  Twitch : <https://www.twitch.tv/dovvzie> \n:pushpin:  Tipeee : <https://fr.tipeee.com/dowzie>');
+:pushpin:  Twitter : <https://twitter.com/dovvzie> \n:pushpin:  Instagram : <https://www.instagram.com/dovvzie> \n:pushpin:  Twitch : <https://www.twitch.tv/dovvzie>');
         }
 
     }
