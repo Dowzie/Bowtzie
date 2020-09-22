@@ -40,6 +40,7 @@ let streamers_assets = {"celkae": ["celkae_1.png", "celkae_2.png", "celkae_3.png
     "shinosan": ["shinosan_1.png", "shinosan_2.png", "shinosan_3.png", "shinosan_4.png"],
     "tsukiyo": ["tsukiyo_1.png", "tsukiyo_2.png", "tsukiyo_3.png", "tsukiyo_4.png"],
 	"kyuti": ["kyuti_1.png", "kyuti_2.png", "kyuti_3.png", "kyuti_4.png"],
+    "deedee": ["deedee_1.png", "deedee_2.png", "deedee_3.png", "deedee_4.png"],
     "ecc": ["ecc_1.png"],
     "extraordinaire cosplay challenge": ["ecc_1.png"],
     "radio cosplay": ["radio_cosplay_announce.png"],
