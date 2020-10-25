@@ -20,13 +20,14 @@ last_clip_time_start.setTime(last_clip_time_start.getTime() - 10*60*1000) // Det
 let recent_clips_id = [];
 
 
-let bot_muted = false;
-const bot_admin = ["194524212134674432", "253491625328771073", "283740549448597505"]
-const channel_live_id = "453256711935885314";
-const channel_ligue_id = "695943025855037440";
-const channel_clips_id = "693665642875977808";
-const channel_test_id = "614263675947188231";
-const channel_geof_test_id = "618874167810326561";
+
+// >> >> Specific Boolean + Channels
+const bot_admin = ["194524212134674432", "253491625328771073", "283740549448597505"];
+const channel_live_id = "453256711935885314"; const channel_ligue_id = "695943025855037440";
+const channel_clips_id = "693665642875977808"; const channel_test_id = "614263675947188231";
+const channel_geof_test_id = "618874167810326561"; let bot_muted = false;
+
+// >> >> Live assets notification
 
 let channel_on_live = {"chouchougeekart": 1, "dovvzie": 1, "geof2810": 1, "liguecosplay": 1};
 
@@ -341,10 +342,10 @@ client.on('ready', () => {
                         stream_notification("chouchougeekart", channel_live_id);
                         stream_notification("liguecosplay", channel_ligue_id);
 
-                        clips_notification("geof2810", channel_geof_test_id, true);
+                        /*clips_notification("geof2810", channel_geof_test_id, true);
                         clips_notification("dovvzie", channel_clips_id, true);
                         clips_notification("chouchougeekart", channel_clips_id, true);
-                        clips_notification("liguecosplay", channel_clips_id, true);
+                        clips_notification("liguecosplay", channel_clips_id, true);*/
                     })
                 } else if (message === "token_valid") {
 
@@ -353,10 +354,10 @@ client.on('ready', () => {
                     stream_notification("chouchougeekart", channel_live_id);
                     stream_notification("liguecosplay", channel_ligue_id);
 
-                    clips_notification("geof2810", channel_geof_test_id);
+                    /*clips_notification("geof2810", channel_geof_test_id);
                     clips_notification("dovvzie", channel_clips_id);
                     clips_notification("chouchougeekart", channel_clips_id);
-                    clips_notification("liguecosplay", channel_clips_id);
+                    clips_notification("liguecosplay", channel_clips_id);*/
                 }
             })
         }
@@ -403,10 +404,11 @@ client.on('message', async(message) => {
 
         // Admin Commands
 
-        if (message.content === '!mutebot' && bot_admin.includes(message.author.id.toString())) {
-            bot_muted = true
-            message.reply('Ben si c\'est comme ca , moi je me casse !')
-        }
+        if(bot_admin.includes(message.author.id.toString())){
+            if (message.content === '!mutebot') {
+                bot_muted = true
+                message.reply('Ben si c\'est comme ca , moi je me casse !')
+            }
 
         // >>> Fun Commands
 
