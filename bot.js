@@ -3,13 +3,17 @@
 const Discord = require('discord.js');
 const https = require('https');
 const client = new Discord.Client();
+const mysql = require('mysql');
 
 // Global Variables - State of Bot
 
 // >> Twitch Variables
-let access_token = null;
-let refresh_token = null;
-let expires_token = null;
+let access_token = null; let refresh_token = null; let expires_token = null;
+
+// >> MySQL Variables
+let mysql_connected = false;
+let conn = mysql.createConnection({
+    host: process.env.SQL_HOST, user: process.env.SQL_USER, password: process.env.SQL_PASS})
 
 // >> Discord Variables
 let last_give_away = null;
@@ -19,6 +23,10 @@ let last_clip_time_start = new Date();
 last_clip_time_start.setTime(last_clip_time_start.getTime() - 10*60*1000) // Detect during the last minute
 let recent_clips_id = [];
 
+// >> >> Draw specific variables
+let draw_message_id = ""; let draw_channel = ""; let draw_collector = null; let draw_collector_list = {};
+
+// >> >> Role Assignation Specific Variable
 
 
 // >> >> Specific Boolean + Channels
@@ -327,11 +335,98 @@ function get_clips_list(twitch_id, pagination = null) {
     })
 }
 
+// >> Testing New Functionality
+
+// >> >> Draw with reactions :: 2 commands : !start_draw and !stop_draw
+
+function start_draw(message){
+    let index = 1;
+    while(draw_collector_list.hasOwnProperty(index)){
+        index += 1;
+    }
+
+    draw_collector_list[index] = {}
+
+    let new_message = "================\nTirage au sort n°"+ index.toString() + "\n" + message.content.replace('!start_draw', '') + "\n\nAjouter une réaction a ce message pour participer !\n================";
+    message.channel.send(new_message).then(answer => {
+        const filter = () => true;
+        draw_collector_list[index]["collector"] = answer.createReactionCollector(filter);
+        draw_collector_list[index]["canal"] = message.channel.id;
+        message.delete();
+    });
+}
+
+function stop_draw(message, index){
+    if(!draw_collector_list.hasOwnProperty(index) || draw_collector_list[index]["canal"] !== message.channel.id){
+        message.reply("Cet id de Tirage au sort n'existe pas du tout OU pas sur ce canal !");
+    }
+    else{
+        draw_collector_list[index]["collector"].stop();
+        message.channel.send("================\nLe tirage au sort "+ index +" est terminé ! \nLancez la commande suivante pour tirer 1 personne ou plus : **!pick_draw draw_id nb_person**\nPour supprimer le Tirage au sort : **!reset_draw draw_id**\n================");
+        message.delete();
+    }
+}
+
+function pick_draw(message, index, nb_person){
+    if(!draw_collector_list.hasOwnProperty(index) || draw_collector_list[index]["canal"] !== message.channel.id){
+        message.reply("Cet id de Tirage au sort n'existe pas du tout OU pas sur ce canal !");
+    }
+    else{
+        let users_name = "";
+        let users_list = draw_collector_list[index]["collector"].users;
+        let tmp_list = users_list.random(nb_person);
+        for(let i = 0; i < tmp_list.length; i++){
+            if(tmp_list[i] !== undefined){
+                users_name += tmp_list[i].username+"\n";
+            }
+        }
+        message.channel.send("================\nUn tirage au sort de "+nb_person+" personne(s) a été demandé ! Le(s) voici :\n"+users_name+"================");
+        message.delete();
+    }
+}
+
+function reset_draw(message, index){
+    if(!draw_collector_list.hasOwnProperty(index) || draw_collector_list[index]["canal"] !== message.channel.id){
+        message.reply("Cet id de Tirage au sort n'existe pas du tout OU pas sur ce canal !");
+    }
+    else{
+        delete draw_collector_list[index];
+        message.delete();
+    }
+}
+
+// >> >> Role Assignation :: !capture_role
+
+/*function capture_role(){
+
+}
+
+function add_role(){
+
+}
+
+function list_role(){
+
+}
+
+function remove_role(){
+
+}*/
+
+
 // Event Manager
 
 client.on('ready', () => {
     console.log('I am ready!');
     setInterval(function () {
+        if (mysql_connected === false){
+            conn.connect(function(err){
+                if(!err){
+                    mysql_connected = true;
+                }
+            })
+        }
+
         if (bot_muted === false) {
             twitch_validation().then((message) => {
                 if (message === "token_null" || message === "token_outdated") {
@@ -342,10 +437,10 @@ client.on('ready', () => {
                         stream_notification("chouchougeekart", channel_live_id);
                         stream_notification("liguecosplay", channel_ligue_id);
 
-                        /*clips_notification("geof2810", channel_geof_test_id, true);
+                        clips_notification("geof2810", channel_geof_test_id, true);
                         clips_notification("dovvzie", channel_clips_id, true);
                         clips_notification("chouchougeekart", channel_clips_id, true);
-                        clips_notification("liguecosplay", channel_clips_id, true);*/
+                        clips_notification("liguecosplay", channel_clips_id, true);
                     })
                 } else if (message === "token_valid") {
 
@@ -354,10 +449,10 @@ client.on('ready', () => {
                     stream_notification("chouchougeekart", channel_live_id);
                     stream_notification("liguecosplay", channel_ligue_id);
 
-                    /*clips_notification("geof2810", channel_geof_test_id);
+                    clips_notification("geof2810", channel_geof_test_id);
                     clips_notification("dovvzie", channel_clips_id);
                     clips_notification("chouchougeekart", channel_clips_id);
-                    clips_notification("liguecosplay", channel_clips_id);*/
+                    clips_notification("liguecosplay", channel_clips_id);
                 }
             })
         }
@@ -409,6 +504,29 @@ client.on('message', async(message) => {
                 bot_muted = true
                 message.reply('Ben si c\'est comme ca , moi je me casse !')
             }
+
+            if (message.content.includes('!start_draw')){
+                start_draw(message);
+            }
+            if (message.content.includes('!pick_draw')){
+                let message_content = message.content.split(" ");
+                if(message_content.length == 3){
+                    pick_draw(message, parseInt(message_content[1]), parseInt(message_content[2]));
+                }
+            }
+            if (message.content.includes('!stop_draw')){
+                let message_content = message.content.split(" ");
+                if(message_content.length == 2){
+                    stop_draw(message, parseInt(message_content[1]));
+                }
+            }
+            if (message.content.includes('!reset_draw')){
+                let message_content = message.content.split(" ");
+                if(message_content.length == 2){
+                    reset_draw(message, parseInt(message_content[1]));
+                }
+            }
+        }
 
         // >>> Fun Commands
 
