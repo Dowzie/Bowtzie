@@ -38,6 +38,7 @@ const channel_geof_test_id = "618874167810326561"; let bot_muted = false;
 // >> >> Live assets notification
 
 let channel_on_live = {"chouchougeekart": 1, "dovvzie": 1, "geof2810": 1, "liguecosplay": 1};
+let channel_last_on = {"chouchougeekart": 0, "dovvzie": 0, "geof2810": 0, "liguecosplay": 0};
 
 // Priority of the screen goes from the last to the first keys of this dictionary.
 let streamers_assets = {"celkae": ["celkae_1.png", "celkae_2.png", "celkae_3.png", "celkae_4.png"],
@@ -82,7 +83,6 @@ function build_options(type, target, game_id, pagination = null) {
         } else if (type === "users") {
             options["path"] = "/helix/users?login=" + target
         } else if (type === "clips") {
-            //options["path"] = "/helix/clips?broadcaster_id=" + target + "&first=100"//&started_at="+lastClipTime.toISOString()
             options["path"] = "/helix/clips?broadcaster_id=" + target + "&started_at="+last_clip_time_start.toISOString();
             if (pagination !== null) {
                 options["path"] += "&after=" + pagination
@@ -217,32 +217,36 @@ function stream_notification(target, channelID) {
                     console.log(target + " not online ... 10 sec");
                 } else {
                     if (channel_on_live[target] === 0) {
-                        channel_on_live[target] = 1
-                        let userStreaming = response["data"][0]
-                        let message = get_announce_title(userStreaming["user_name"].toLowerCase());
-                        let emb = get_announce_embed(userStreaming["user_name"].toLowerCase(), userStreaming["title"],
-                            userStreaming["thumbnail_url"], userStreaming["timestamp"]);
+                        if(Date.now() >= channel_on_live[target] + 2*60*1000){ // Handle interruption of 2 minutes
+                            channel_on_live[target] = 1
+                            let userStreaming = response["data"][0]
+                            let message = get_announce_title(userStreaming["user_name"].toLowerCase());
+                            let emb = get_announce_embed(userStreaming["user_name"].toLowerCase(), userStreaming["title"],
+                                userStreaming["thumbnail_url"], userStreaming["timestamp"]);
 
-                        if (userStreaming["game_id"]) {
-                            const options2 = build_options("games", undefined, userStreaming["game_id"])
-                            const req2 = https.request(options2, (res2) => {
-                                res2.on('data', (d2) => {
-                                    let game_info = JSON.parse(d2)
-                                    let game_played = game_info["data"][0]["box_art_url"]
-                                        .replace(/{width}/, "60").replace(/{height}/, "80")
-                                    emb.setThumbnail(game_played)
-                                        .addField('En live sur', game_info["data"][0]["name"], true)
-                                    channel.send(message, {"embed": emb});
+                            if (userStreaming["game_id"]) {
+                                const options2 = build_options("games", undefined, userStreaming["game_id"])
+                                const req2 = https.request(options2, (res2) => {
+                                    res2.on('data', (d2) => {
+                                        let game_info = JSON.parse(d2)
+                                        let game_played = game_info["data"][0]["box_art_url"]
+                                            .replace(/{width}/, "60").replace(/{height}/, "80")
+                                        emb.setThumbnail(game_played)
+                                            .addField('En live sur', game_info["data"][0]["name"], true)
+                                        channel.send(message, {"embed": emb});
+                                    })
                                 })
-                            })
-                            req2.on('error', (error) => {
-                                console.log(error)
-                            })
-                            req2.end()
-                        } else {
-                            channel.send(message, {"embed": emb});
+                                req2.on('error', (error) => {
+                                    console.log(error)
+                                })
+                                req2.end()
+                            } else {
+                                channel.send(message, {"embed": emb});
+                            }
                         }
-
+                    }
+                    else{
+                        channel_on_live[target] = Date.now()
                     }
                 }
             }
