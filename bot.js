@@ -41,7 +41,8 @@ let channel_on_live = {"chouchougeekart": 1, "dovvzie": 1, "geof2810": 1, "ligue
 let channel_last_on = {"chouchougeekart": 0, "dovvzie": 0, "geof2810": 0, "liguecosplay": 0};
 
 // Priority of the screen goes from the last to the first keys of this dictionary.
-let streamers_assets = {"celkae": ["celkae_1.png", "celkae_2.png", "celkae_3.png", "celkae_4.png"],
+let streamers_assets = {"angia": ["angia_1.png", "angia_2.png", "angia_3.png", "angia_4.png"],
+	"celkae": ["celkae_1.png", "celkae_2.png", "celkae_3.png", "celkae_4.png"],
     "chouchou": ["chouchou_1.png", "chouchou_2.png", "chouchou_3.png", "chouchou_4.png"],
     "dowzie": ["dowzie_1.png", "dowzie_2.png", "dowzie_3.png", "dowzie_4.png"],
     "geof2810": ["geof2810_1.png"],
@@ -485,7 +486,7 @@ client.on('message', async(message) => {
         }
 
         // Test Commands
-        /*if (message.content.includes('!testStream') && bot_admin.includes(message.author.id.toString())) {
+        if (message.content.includes('!testStream') && bot_admin.includes(message.author.id.toString())) {
             let emb = null;
             if (message.content.includes('liguecosplay')){
                 emb = get_announce_embed("liguecosplay", message.content, "", 0)
@@ -499,7 +500,7 @@ client.on('message', async(message) => {
                 }
             }
             message.reply({"embed": emb})
-        }*/
+        }
 
         // Admin Commands
 
