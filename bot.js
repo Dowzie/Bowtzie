@@ -218,7 +218,7 @@ function stream_notification(target, channelID) {
                     console.log(target + " not online ... 10 sec");
                 } else {
                     if (channel_on_live[target] === 0) {
-                        if(Date.now() >= channel_on_live[target] + 2*60*1000){ // Handle interruption of 2 minutes
+                        if(Date.now() >= channel_on_live[target] + 5*60*1000){ // Handle interruption of 2 minutes
                             channel_on_live[target] = 1
                             let userStreaming = response["data"][0]
                             let message = get_announce_title(userStreaming["user_name"].toLowerCase());
@@ -244,6 +244,9 @@ function stream_notification(target, channelID) {
                             } else {
                                 channel.send(message, {"embed": emb});
                             }
+                        }
+                        else{
+                            channel_on_live[target] = 1;
                         }
                     }
                     else{
